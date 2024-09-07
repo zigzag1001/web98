@@ -171,3 +171,18 @@
 	vertical-align: middle;
 	font-size: 1.8em;
 }
+
+.profileImgContainer {
+	width: 100%;
+	text-align: center;
+}
+
+.profileImgContainer img {
+	width: 230px;
+	border-style: inset;
+	border-color: lightgray;
+}
+
+.profile button {
+	width: 100%;
+}
