@@ -153,22 +153,27 @@ const namemap = {
 // handles taskbar to window interaction
 function taskbar(win, action) {
 	if (action == 'add') {
-		win.classList.forEach((classname) => {
+		var winname;
+		for (var classname of win.classList) {
 			if (classname in namemap) {
 				var winname = namemap[classname];
-				var taskbarbutton = document.createElement('button');
-				taskbarbutton.className = 'taskbar-button';
-				taskbarbutton.textContent = winname;
-				taskbarbutton.onclick = function() {
-					minimizeWindow(win);
-				}
-
-				// winbarmap[win] = taskbarbutton;
-				winbarmap.set(win, taskbarbutton);
-				openwins.appendChild(taskbarbutton);
-				return;
+				break;
 			}
-		});
+		}
+		if (!winname) {
+			var winname = win.querySelector('.title-bar-text').textContent;
+		}
+		var taskbarbutton = document.createElement('button');
+		taskbarbutton.className = 'taskbar-button';
+		taskbarbutton.textContent = winname;
+		taskbarbutton.onclick = function() {
+			minimizeWindow(win);
+		}
+
+		winbarmap.set(win, taskbarbutton);
+		openwins.appendChild(taskbarbutton);
+		console.log(winname);
+		return;
 	} else if (action == 'remove') {
 		if (winbarmap.has(win)) {
 			winbarmap.get(win).remove();
