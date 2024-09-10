@@ -15,6 +15,10 @@
 	--animate-duration: 0.2s;
 }
 
+.animate__animated.animate__fadeInUpBig {
+	--animate-duration: 0.5s;
+}
+
 .mainwin {
 	position: absolute;
 	top: 0;
@@ -58,7 +62,9 @@
 }
 
 .open-windows {
-	width: 88%;
+	width: 89%;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 .clock-tray {
@@ -84,6 +90,7 @@
 .taskbar-button {
 	margin-left: 5px;
 	height: 100%;
+	font-size: 1.04em;
 }
 
 .taskbar-button:hover {
@@ -185,4 +192,33 @@
 
 .profile button {
 	width: 100%;
+	font-weight: bold;
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+
+.title-bar-controls button[aria-label="Close"] {
+	margin-left: 0px;
+}
+
+.drag-corner {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 8px;
+	height: 8px;
+	cursor: se-resize;
+	user-select: none;
+	/* background-image: url(/img/corner.png); */
+	background-image: url(/img/corner.svg);
+	background-size: contain;
+}
+
+.window-body {
+	height: 100%;
+}
+
+iframe {
+	width: calc(100% - 4px);
+	height: calc(100% - 36px);
 }

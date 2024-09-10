@@ -7,7 +7,7 @@ let maxz = 50;
 let removing = false;
 
 // returns window element
-// opts: title, body, width, className
+// opts: title, body, width, height, className, closeDelay, canResize
 function createWindow(opts = {}) {
 	var window_ = document.createElement('div');
 	if (opts.className) {
@@ -18,6 +18,9 @@ function createWindow(opts = {}) {
 
 	var titlebar = window_.appendChild(document.createElement('div'));
 	titlebar.className = 'title-bar';
+	titlebar.addEventListener('dblclick', () => {
+		maximizeWindow(window_);
+	});
 
 	var titlebartext = titlebar.appendChild(document.createElement('div'));
 	titlebartext.className = 'title-bar-text';
@@ -41,20 +44,37 @@ function createWindow(opts = {}) {
 	maxbutton.onclick = function() {
 		maximizeWindow(window_);
 	}
-	closebutton.onclick = function() {
-		removeWindow(window_);
+	if (opts.closeDelay != undefined) {
+		closebutton.onclick = function() {
+			removeWindow(window_, opts.closeDelay);
+		}
+	} else {
+		closebutton.onclick = function() {
+			removeWindow(window_);
+		}
 	}
 
 	if (opts.body) {
 		window_.appendChild(opts.body);
 	} else {
-		window_.appendChild(simplebody('This is a warning message.'));
+		var simplebody = simplebody('This is a warning message.');
+		window_.appendChild(simplebody);
+	}
+
+	if (opts.canResize != false) {
+		var dragcorner = document.createElement('div');
+		dragcorner.className = 'drag-corner';
+		window_.children[1].appendChild(dragcorner);
+		handleResizing(dragcorner);
 	}
 
 	if (opts.width) {
-		window_.style.width = opts.width;
+		window_.style.width = opts.width + 'px';
 	} else {
 		window_.style.width = '250px';
+	}
+	if (opts.height) {
+		window_.style.height = opts.height + 'px';
 	}
 
 	window_.style.margin = '32px';
@@ -64,13 +84,19 @@ function createWindow(opts = {}) {
 	return window_;
 }
 
-function addWindow(win, x = 0, y = 0) {
+function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
+
+	console.log(x, y, mx, my);
 
 	taskbar(win, 'add');
+	if (mx == 0)
+		mx = window.innerWidth - 500;
+	if (my == 0)
+		my = window.innerHeight - 240;
 
 	if (x == 0 && y == 0) {
-		x = Math.floor(Math.random() * (window.innerWidth - 500));
-		y = Math.floor(Math.random() * (window.innerHeight - 240));
+		x = Math.floor(Math.random() * mx);
+		y = Math.floor(Math.random() * my);
 	}
 	win.style.zIndex = maxz++;
 	win.style.left = x + 'px';
@@ -134,12 +160,12 @@ function randwin() {
 }
 
 // Fancy window removal
-function removeWindow(win) {
+function removeWindow(win, delay = 1000) {
 	win.classList.add('animate__' + outro);
 	taskbar(win, 'remove');
 	setTimeout(() => {
 		win.remove();
-	}, 1000);
+	}, delay);
 }
 
 const winbarmap = new Map();
@@ -167,12 +193,15 @@ function taskbar(win, action) {
 		taskbarbutton.className = 'taskbar-button';
 		taskbarbutton.textContent = winname;
 		taskbarbutton.onclick = function() {
-			minimizeWindow(win);
+			if ((parseInt(win.style.zIndex) + 1) < maxz) {
+				win.style.zIndex = maxz++;
+			} else {
+				minimizeWindow(win);
+			}
 		}
 
 		winbarmap.set(win, taskbarbutton);
 		openwins.appendChild(taskbarbutton);
-		console.log(winname);
 		return;
 	} else if (action == 'remove') {
 		if (winbarmap.has(win)) {
@@ -184,30 +213,47 @@ function taskbar(win, action) {
 }
 
 // handles minimizing windows
+const minAnimation = 'animate__fadeOutDownBig';
+const unminAnimation = 'animate__fadeInUpBig';
 function minimizeWindow(win) {
 	if (win.style.display == 'none') {
+		win.classList.add(unminAnimation);
 		win.style.zIndex = maxz++;
 		win.style.display = 'block';
+		setTimeout(() => {
+			win.classList.remove(unminAnimation);
+		}, 500);
 	} else {
-		win.style.display = 'none';
+		// win.classList.add('animate__bounceOutDown');
+		win.classList.add(minAnimation)
+		setTimeout(() => {
+			win.style.display = 'none';
+			win.classList.remove(minAnimation)
+		}, 500);
 	}
 }
 
 // handles maximizing windows
 function maximizeWindow(win) {
-	if (win.style.width == '100%') {
+	const maxWidthStr = 'calc(100% - 6px)';
+	const maxHeightStr = 'calc(100% - 30px)';
+	if (win.style.width == maxWidthStr) {
 		win.style.width = win.dataset.width;
-		win.style.height = null;
+		win.style.height = win.dataset.height;
 		win.style.left = win.dataset.x;
 		win.style.top = win.dataset.y;
+		win.children[1].style.marginLeft = null;
 	} else {
 		win.dataset.width = win.style.width;
+		win.dataset.height = win.style.height;
 		win.dataset.x = win.style.left;
 		win.dataset.y = win.style.top;
+		console.log(win.dataset.x, win.dataset.y);
 		win.style.top = '-' + win.style.margin;
 		win.style.left = '-' + win.style.margin;
-		win.style.width = '100%';
-		win.style.height = '100%';
+		win.style.width = maxWidthStr;
+		win.style.height = maxHeightStr;
+		win.children[1].style.marginLeft = '7px';
 	}
 }
 
@@ -326,3 +372,59 @@ function desktopSelectSquare() {
 	});
 }
 desktopSelectSquare();
+
+// bottom right resize corner
+function handleResizing(corner) {
+	var item = corner.closest('.window');
+	let offsetX, offsetY, isResizing = false;
+	var minWidth, minHeight;
+	setTimeout(() => {
+		minWidth = item.offsetWidth - 6;
+		minHeight = item.offsetHeight - 6;
+	}, 1000);
+	corner.addEventListener('mousedown', (e) => {
+		e.preventDefault();
+		offsetX = e.clientX - item.getBoundingClientRect().right;
+		offsetY = e.clientY - item.getBoundingClientRect().bottom;
+		isResizing = true;
+	});
+	document.addEventListener('mousemove', (e) => {
+		if (isResizing) {
+			var width = e.clientX - item.getBoundingClientRect().left + offsetX;
+			var height = e.clientY - item.getBoundingClientRect().top + offsetY;
+			if (width < minWidth) {
+				width = minWidth;
+			}
+			if (height < minHeight) {
+				height = minHeight;
+			}
+			item.style.width = width + 'px';
+			item.style.height = height + 'px';
+		}
+	});
+	document.addEventListener('mouseup', () => {
+		isResizing = false;
+	});
+}
+
+function simpleIframe(src, title = 'Iframe') {
+	var windowbody = document.createElement('div');
+	windowbody.className = 'window-body';
+	var iframe = windowbody.appendChild(document.createElement('iframe'));
+	iframe.src = src;
+	console.log(window.innerWidth / 2);
+	var c = createWindow({
+		body: windowbody,
+		title: title,
+		width: window.innerWidth / 2,
+		height: window.innerHeight / 2,
+		className: 'window',
+		closeDelay: 0,
+	});
+	return c;
+}
+
+window.onload = function() {
+	var clock = document.querySelector('.clock');
+	clock.innerHTML = "📅 " + new Date().toLocaleTimeString();
+}

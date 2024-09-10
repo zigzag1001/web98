@@ -12,6 +12,7 @@
 </head>
 
 <body style="background: #008080; overflow: hidden">
+  <script>0</script> <!-- "Layout was forced before the page was fully loaded" -->
   <div class="desktop"></div>
   <div class="taskbar norem window">
     <img class="start-button" onclick="toggleStartmenu();"
@@ -23,9 +24,7 @@
       <!-- <button class="taskbar-button" onclick="customWin();">📁NEW WINDOW</button> -->
     </div>
     <div class="clock-tray norem">
-      <p onclick='this.innerHTML = "📅 " + new Date().toLocaleTimeString();'>
-        📅 12:00:00 AM
-      </p>
+      <p class="clock" onclick='this.innerHTML = "📅 " + new Date().toLocaleTimeString();'></p>
     </div>
   </div>
   <div class="startmenucontainer">
@@ -46,7 +45,7 @@
           <p>⛔ Close All</p>
         </div>
         <div class="startmenuitem" onclick="weekoldroadkill();">
-          <p>🦌 WeekOldRoadkill</p>
+          <p>🦌 weekOldRoadkill</p>
         </div>
         <div class="startmenuitem" onclick="zigzag1001();">
           <p>👑 zigzag1001</p>
