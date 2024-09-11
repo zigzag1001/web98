@@ -309,9 +309,11 @@ function handleDragging(item) {
 		if (e.target.classList.contains('title-bar-controls')) return;
 		if (allowedDragClasses.some((classname) => e.target.classList.contains(classname))) {
 			e.preventDefault();
-			let margin = parseInt(item.style.margin.substring(0, item.style.margin.length - 2));
-			offsetX = e.clientX + margin - item.getBoundingClientRect().left;
-			offsetY = e.clientY + margin - item.getBoundingClientRect().top;
+			// let margin = parseInt(item.style.margin.substring(0, item.style.margin.length - 2));
+			let marginLeft = parseInt(item.style.marginLeft.substring(0, item.style.marginLeft.length - 2));
+			let marginTop = parseInt(item.style.marginTop.substring(0, item.style.marginTop.length - 2));
+			offsetX = e.clientX + marginLeft - item.getBoundingClientRect().left;
+			offsetY = e.clientY + marginTop - item.getBoundingClientRect().top;
 			isDragging = true;
 		}
 	});
@@ -351,7 +353,10 @@ function toggleStartmenu() {
 
 function desktopSelectSquare() {
 	var desktop = document.querySelector('.desktop');
+	var selectedIcons = [];
 	desktop.addEventListener('mousedown', (e) => {
+		selectedIcons = [];
+		var icons = document.querySelectorAll('.icon');
 		if (e.target.classList.contains('icon') || e.target.classList.contains('iconimg')) return;
 		let x = e.clientX;
 		let y = e.clientY;
@@ -373,6 +378,19 @@ function desktopSelectSquare() {
 			}
 			square.style.width = width + 'px';
 			square.style.height = height + 'px';
+			icons.forEach((icon) => {
+				if (icon.style.display == 'none') return;
+				if (icon.getBoundingClientRect().left < square.getBoundingClientRect().right &&
+					icon.getBoundingClientRect().right > square.getBoundingClientRect().left &&
+					icon.getBoundingClientRect().top < square.getBoundingClientRect().bottom &&
+					icon.getBoundingClientRect().bottom > square.getBoundingClientRect().top) {
+					icon.style.background = 'rgba(0, 0, 0, 0.1)';
+					selectedIcons.push(icon);
+				} else {
+					icon.style.background = null;
+					selectedIcons = selectedIcons.filter((selectedIcon) => selectedIcon != icon);
+				}
+			});
 		});
 		desktop.addEventListener('mouseup', () => {
 			square.remove();
@@ -436,6 +454,7 @@ function simpleIframe(src, title = 'Iframe', max = false) {
 }
 
 // desktop icons
+// https://win98icons.alexmeub.com/ -> get /png/* -> put into /img/icon/
 function createIcon(iconPth, title, onclick) {
 	var icon = document.createElement('div');
 	icon.className = 'icon';
