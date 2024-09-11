@@ -78,6 +78,8 @@
 	padding-left: 10px;
 	padding-right: 20px;
 	font-size: 1.2em;
+	height: 18px;
+	overflow: hidden;
 }
 
 .vertical-line {
@@ -218,7 +220,41 @@
 	height: 100%;
 }
 
+.window .title-bar-text {
+	cursor: default;
+}
+
 iframe {
 	width: calc(100% - 4px);
 	height: calc(100% - 36px);
+	border-style: inset;
+	border-color: lightgray;
+}
+
+.icon {
+	width: 64px;
+	height: 64px;
+	position: absolute;
+	text-align: center;
+	padding-bottom: 10px;
+}
+
+.icon:hover {
+	background: rgba(0, 0, 0, 0.1);
+}
+
+.icon img {
+	width: 70%;
+	user-select: none;
+	margin-top: 8px;
+}
+
+.icon p {
+	width: 150%;
+	text-align: center;
+	margin-top: 2px;
+	font-family: "Pixelated MS Sans Serif", Arial;
+	color: white;
+	user-select: none;
+	margin-left: -16px;
 }

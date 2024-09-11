@@ -193,6 +193,17 @@ function zigzag1001() {
 	addWindow(custom, x, y);
 }
 
+// choose random icons
+var icons = ["doctor_watson.png", "msagent-3.png", "msagent_file-1.png", "accessibility-4.png", "address_book_user.png", "users_key-2.png"]
+var zigzag1001icon = icons[Math.floor(Math.random() * icons.length)];
+delete icons[zigzag1001icon];
+var weekoldroadkillicon = icons[Math.floor(Math.random() * icons.length)];
+
+//weekoldroadkill
+addIcon(createIcon(weekoldroadkillicon, 'weekOldRoadkill', weekoldroadkill));
+//zigzag1001
+addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
+
 
 window.onload = function() {
 	numprofiles = 30;

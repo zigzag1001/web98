@@ -168,6 +168,9 @@ function randwin() {
 
 // Fancy window removal
 function removeWindow(win, delay = 1000) {
+	if (win.dataset.aniDelay) {
+		delay = win.dataset.aniDelay;
+	}
 	win.classList.add('animate__' + outro);
 	taskbar(win, 'remove');
 	setTimeout(() => {
@@ -255,7 +258,6 @@ function maximizeWindow(win) {
 		win.dataset.height = win.style.height;
 		win.dataset.x = win.style.left;
 		win.dataset.y = win.style.top;
-		console.log(win.dataset.x, win.dataset.y);
 		win.style.top = '-' + win.style.margin;
 		win.style.left = '-' + win.style.margin;
 		win.style.width = maxWidthStr;
@@ -297,15 +299,15 @@ function closeAll() {
 
 // MOVEABLE WINDOWS
 
+const allowedDragClasses = ['title-bar', 'title-bar-text', 'icon', 'iconimg'];
+
 function handleDragging(item) {
 	let offsetX, offsetY, isDragging = false;
 	item.style.position = 'absolute';
-	// item.querySelector('.title-bar').style.cursor = 'move';
-	item.querySelector('.title-bar-text').style.cursor = 'default';
 	item.addEventListener('mousedown', (e) => {
 		item.style.zIndex = maxz++;
 		if (e.target.classList.contains('title-bar-controls')) return;
-		if (e.target.classList.contains('title-bar') || e.target.classList.contains('title-bar-text')) {
+		if (allowedDragClasses.some((classname) => e.target.classList.contains(classname))) {
 			e.preventDefault();
 			let margin = parseInt(item.style.margin.substring(0, item.style.margin.length - 2));
 			offsetX = e.clientX + margin - item.getBoundingClientRect().left;
@@ -350,6 +352,7 @@ function toggleStartmenu() {
 function desktopSelectSquare() {
 	var desktop = document.querySelector('.desktop');
 	desktop.addEventListener('mousedown', (e) => {
+		if (e.target.classList.contains('icon') || e.target.classList.contains('iconimg')) return;
 		let x = e.clientX;
 		let y = e.clientY;
 		let square = document.createElement('div');
@@ -419,7 +422,6 @@ function simpleIframe(src, title = 'Iframe', max = false) {
 	windowbody.className = 'window-body';
 	var iframe = windowbody.appendChild(document.createElement('iframe'));
 	iframe.src = src;
-	console.log(window.innerWidth / 2);
 	var c = createWindow({
 		body: windowbody,
 		title: title,
@@ -429,8 +431,62 @@ function simpleIframe(src, title = 'Iframe', max = false) {
 		closeDelay: 0,
 		max: max
 	});
+	c.dataset.aniDelay = 1;
 	return c;
 }
+
+// desktop icons
+function createIcon(iconPth, title, onclick) {
+	var icon = document.createElement('div');
+	icon.className = 'icon';
+	icon.addEventListener('dblclick', function() {
+		icon.style.background = 'rgba(0, 0, 0, 0.3)';
+		setTimeout(() => {
+			onclick();
+			icon.style.background = null;
+		}, 100);
+	});
+	icon.style.margin = '16px';
+
+	var iconimg = document.createElement('img');
+	if (iconPth == null)
+		iconPth = 'windows_slanted-1.png';
+	iconimg.src = 'img/icon/' + iconPth;
+	iconimg.className = 'iconimg';
+	iconimg.setAttribute('draggable', false);
+	var icontext = document.createElement('p');
+	icontext.textContent = title;
+	icon.appendChild(iconimg);
+	icon.appendChild(icontext);
+
+	handleDragging(icon);
+
+	return icon;
+}
+
+var iconx = 3;
+var icony = 0;
+function addIcon(icon) {
+	icon.style.left = iconx + 'px';
+	icon.style.top = icony + 'px';
+	document.querySelector('.desktop').appendChild(icon);
+	var iconheight = icon.offsetHeight;
+	if (icony < 810) {
+		icony += iconheight + 16;
+	} else {
+		icony = 0;
+		iconx += 84;
+	}
+}
+
+// close all icon
+var closeAllIcon = createIcon('msg_error-0.png', 'Close All', closeAll);
+addIcon(closeAllIcon);
+
+// recursive window
+addIcon(createIcon(null, 'da heaeell', () => {
+	addWindow(simpleIframe('http://weekoldroadkill.com', 'nahhh', false));
+}));
 
 window.onload = function() {
 	var clock = document.querySelector('.clock');
