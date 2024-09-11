@@ -98,24 +98,19 @@ function weekoldroadkill() {
 	var img = wincontainer.appendChild(document.createElement('img'));
 	img.src = 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800';
 
-	img.onclick = function() {
-		dronesIframe();
-		// screaminginsectsIframe();
-	}
-
 	windowbody.appendChild(document.createElement('br'));
 
 	var flex1 = windowbody.appendChild(document.createElement('div'));
 	flex1.style.display = 'flex';
+	var iframebutton = flex1.appendChild(document.createElement('button'));
 	var abut1 = flex1.appendChild(document.createElement('a'));
 	var but1 = abut1.appendChild(document.createElement('button'));
 	abut1.href = '/drones/';
 	abut1.target = '_blank';
-	abut1.style.flex = '3';
-	but1.textContent = 'Drones';
-	var iframebutton = flex1.appendChild(document.createElement('button'));
-	iframebutton.textContent = 'Iframe';
-	iframebutton.style.flex = '1';
+	abut1.style.flex = '1';
+	but1.textContent = 'Direct';
+	iframebutton.textContent = 'Drones';
+	iframebutton.style.flex = '3';
 	iframebutton.onclick = function() {
 		dronesIframe();
 	}
@@ -124,15 +119,15 @@ function weekoldroadkill() {
 
 	var flex2 = windowbody.appendChild(document.createElement('div'));
 	flex2.style.display = 'flex';
+	var iframebutton2 = flex2.appendChild(document.createElement('button'));
 	var abut2 = flex2.appendChild(document.createElement('a'));
 	var but2 = abut2.appendChild(document.createElement('button'));
 	abut2.href = '/screaming-insects/';
 	abut2.target = '_blank';
-	abut2.style.flex = '3';
-	but2.textContent = 'Screaming Insects';
-	var iframebutton2 = flex2.appendChild(document.createElement('button'));
-	iframebutton2.textContent = 'Iframe';
-	iframebutton2.style.flex = '1';
+	abut2.style.flex = '1';
+	but2.textContent = 'Direct';
+	iframebutton2.textContent = 'Screaming Insects';
+	iframebutton2.style.flex = '3';
 	iframebutton2.onclick = function() {
 		screaminginsectsIframe();
 	}
@@ -165,11 +160,11 @@ function weekoldroadkill() {
 }
 
 function dronesIframe() {
-	addWindow(simpleIframe('/drones/index.html', 'Drones'), 0, 0, mx = 900, my = 380);
+	addWindow(simpleIframe('/drones/index.html', 'Drones', true), 0, 0, mx = 900, my = 380);
 }
 
 function screaminginsectsIframe() {
-	addWindow(simpleIframe('/screaming-insects/index.html', 'Screaming Insects'), 0, 0, mx = 900, my = 380);
+	addWindow(simpleIframe('/screaming-insects/index.html', 'Screaming Insects', true), 0, 0, mx = 900, my = 380);
 }
 
 function zigzag1001() {
@@ -198,20 +193,6 @@ function zigzag1001() {
 	addWindow(custom, x, y);
 }
 
-function clearAllWindow() {
-	var windowbody = document.createElement('div');
-	windowbody.className = 'window-body';
-	windowbody.appendChild(document.createElement('p')).textContent = 'Clear all windows?';
-	var button = windowbody.appendChild(document.createElement('button'));
-	button.textContent = 'Yes';
-	button.onclick = function() {
-		closeAll();
-	}
-	var c = createWindow({ body: windowbody, title: 'Clear All Windows' });
-
-	addWindow(c, window.innerWidth / 2 - 150, window.innerHeight / 2 - 50);
-}
-
 
 window.onload = function() {
 	numprofiles = 30;
@@ -226,9 +207,6 @@ window.onload = function() {
 		i++;
 		if (i >= numprofiles) {
 			clearInterval(interval);
-			setTimeout(function() {
-				clearAllWindow();
-			}, 700);
 		}
 	}, 87);
 	var clock = document.querySelector('.clock');

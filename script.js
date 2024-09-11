@@ -7,7 +7,7 @@ let maxz = 50;
 let removing = false;
 
 // returns window element
-// opts: title, body, width, height, className, closeDelay, canResize
+// opts: title, body, width, height, className, closeDelay, canResize, max
 function createWindow(opts = {}) {
 	var window_ = document.createElement('div');
 	if (opts.className) {
@@ -81,14 +81,16 @@ function createWindow(opts = {}) {
 
 	handleDragging(window_);
 
+	if (opts.max)
+		window_.dataset.max = true;
+
 	return window_;
 }
 
 function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
 
-	console.log(x, y, mx, my);
-
 	taskbar(win, 'add');
+
 	if (mx == 0)
 		mx = window.innerWidth - 500;
 	if (my == 0)
@@ -102,6 +104,11 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
 	win.style.left = x + 'px';
 	win.style.top = y + 'px';
 	body.appendChild(win);
+
+	if (win.dataset.max) {
+		maximizeWindow(win);
+	}
+
 	setTimeout(() => {
 		win.classList.remove('animate__' + intro);
 	}, 1000);
@@ -407,7 +414,7 @@ function handleResizing(corner) {
 	});
 }
 
-function simpleIframe(src, title = 'Iframe') {
+function simpleIframe(src, title = 'Iframe', max = false) {
 	var windowbody = document.createElement('div');
 	windowbody.className = 'window-body';
 	var iframe = windowbody.appendChild(document.createElement('iframe'));
@@ -420,6 +427,7 @@ function simpleIframe(src, title = 'Iframe') {
 		height: window.innerHeight / 2,
 		className: 'window',
 		closeDelay: 0,
+		max: max
 	});
 	return c;
 }
