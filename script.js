@@ -435,19 +435,36 @@ function handleResizing(corner) {
 	});
 }
 
-function simpleIframe(src, title = 'Iframe', max = false) {
+// opts: title, max, canResize, width, height
+function simpleIframe(src, opts = {}) {
+	if (!opts.title) {
+		opts.title = 'Iframe';
+	}
+	if (opts.max == undefined) {
+		opts.max = false;
+	}
+	if (opts.canResize == undefined) {
+		opts.canResize = true;
+	}
+	if (opts.width == undefined) {
+		opts.width = window.innerWidth / 2;
+	}
+	if (opts.height == undefined) {
+		opts.height = window.innerHeight / 2;
+	}
 	var windowbody = document.createElement('div');
 	windowbody.className = 'window-body';
 	var iframe = windowbody.appendChild(document.createElement('iframe'));
 	iframe.src = src;
 	var c = createWindow({
 		body: windowbody,
-		title: title,
-		width: window.innerWidth / 2,
-		height: window.innerHeight / 2,
+		title: opts.title,
+		width: opts.width,
+		height: opts.height,
 		className: 'window',
 		closeDelay: 0,
-		max: max
+		max: opts.max,
+		canResize: opts.canResize
 	});
 	c.dataset.aniDelay = 1;
 	return c;
@@ -463,7 +480,7 @@ function createIcon(iconPth, title, onclick) {
 		setTimeout(() => {
 			onclick();
 			icon.style.background = null;
-		}, 100);
+		}, 80);
 	});
 	icon.style.margin = '16px';
 
@@ -504,8 +521,39 @@ addIcon(closeAllIcon);
 
 // recursive window
 addIcon(createIcon(null, 'da heaeell', () => {
-	addWindow(simpleIframe('http://weekoldroadkill.com', 'nahhh', false));
+	addWindow(simpleIframe('http://weekoldroadkill.com', { title: 'nahhh', max: false }));
 }));
+
+// opts: title, width, height
+function simpleImage(src, opts = {}) {
+	if (!opts.title) {
+		opts.title = 'Image';
+	}
+	if (!opts.width) {
+		opts.width = 256;
+	}
+	if (!opts.height) {
+		opts.height = 240;
+	}
+	windowbody = document.createElement('div');
+	windowbody.className = 'window-body';
+
+	bodyimg = document.createElement('img');
+	bodyimg.className = 'imgviewer_img';
+	bodyimg.src = src;
+
+	windowbody.appendChild(bodyimg);
+
+	w = createWindow({
+		body: windowbody,
+		title: opts.title,
+		width: opts.width,
+		height: opts.height,
+	});
+
+	return w;
+}
+
 
 window.onload = function() {
 	var clock = document.querySelector('.clock');

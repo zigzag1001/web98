@@ -134,10 +134,14 @@ function weekoldroadkill() {
 
 	windowbody.appendChild(document.createElement('br'));
 
-	var abut3 = windowbody.appendChild(document.createElement('a'));
-	var but3 = abut3.appendChild(document.createElement('button'));
-	abut3.href = '/saso/';
-	abut3.target = '_blank';
+	// var abut3 = windowbody.appendChild(document.createElement('a'));
+	// var but3 = abut3.appendChild(document.createElement('button'));
+	// abut3.href = '/saso/';
+	// abut3.target = '_blank';
+	var but3 = windowbody.appendChild(document.createElement('button'));
+	but3.onclick = function() {
+		SaSoIframe();
+	}
 	but3.textContent = 'SaSo';
 
 	windowbody.appendChild(document.createElement('br'));
@@ -160,11 +164,15 @@ function weekoldroadkill() {
 }
 
 function dronesIframe() {
-	addWindow(simpleIframe('/drones/index.html', 'Drones', true), 0, 0, mx = 900, my = 380);
+	addWindow(simpleIframe('/drones/index.html', opts = { title: 'Drones', max: true }), 0, 0, mx = 900, my = 380);
 }
 
 function screaminginsectsIframe() {
-	addWindow(simpleIframe('/screaming-insects/index.html', 'Screaming Insects', true), 0, 0, mx = 900, my = 380);
+	addWindow(simpleIframe('/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true }), 0, 0, mx = 900, my = 380);
+}
+
+function SaSoIframe() {
+	addWindow(simpleIframe('/saso/', opts = { title: 'SaSo', max: false, canResize: false, height: 565 }), 0, 0, mx = 900, my = 380);
 }
 
 function zigzag1001() {
@@ -203,6 +211,9 @@ var weekoldroadkillicon = icons[Math.floor(Math.random() * icons.length)];
 addIcon(createIcon(weekoldroadkillicon, 'weekOldRoadkill', weekoldroadkill));
 //zigzag1001
 addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
+
+addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'))
+addWindow(simpleImage('https://camo.githubusercontent.com/ed3b0212c8a48e5115aa87c48e4fc5fccf3d602f9dbd95bf460d895a91c47576/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
 
 
 window.onload = function() {

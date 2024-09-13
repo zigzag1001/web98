@@ -261,3 +261,11 @@ iframe {
 	user-select: none;
 	margin-left: -16px;
 }
+
+.imgviewer_img {
+	width: calc(100% - 29px);
+	height: calc(100% - 44px);
+	position: absolute;
+	border-style: inset;
+	border-color: lightgray;
+}
