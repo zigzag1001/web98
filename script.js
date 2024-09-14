@@ -303,15 +303,20 @@ const allowedDragClasses = ['title-bar', 'title-bar-text', 'icon', 'iconimg'];
 
 function handleDragging(item) {
 	let offsetX, offsetY, isDragging = false;
+	var isIcon = false;
+	if (item.classList.contains('icon')) {
+		isIcon = true;
+		var lastX, lastY;
+	}
 	item.style.position = 'absolute';
+	let marginLeft = parseInt(item.style.marginLeft.substring(0, item.style.marginLeft.length - 2));
+	let marginTop = parseInt(item.style.marginTop.substring(0, item.style.marginTop.length - 2));
 	item.addEventListener('mousedown', (e) => {
 		item.style.zIndex = maxz++;
 		if (e.target.classList.contains('title-bar-controls')) return;
 		if (allowedDragClasses.some((classname) => e.target.classList.contains(classname))) {
 			e.preventDefault();
 			// let margin = parseInt(item.style.margin.substring(0, item.style.margin.length - 2));
-			let marginLeft = parseInt(item.style.marginLeft.substring(0, item.style.marginLeft.length - 2));
-			let marginTop = parseInt(item.style.marginTop.substring(0, item.style.marginTop.length - 2));
 			offsetX = e.clientX + marginLeft - item.getBoundingClientRect().left;
 			offsetY = e.clientY + marginTop - item.getBoundingClientRect().top;
 			isDragging = true;
@@ -325,6 +330,32 @@ function handleDragging(item) {
 	});
 	document.addEventListener('mouseup', () => {
 		isDragging = false;
+		// snap icon to grid
+		if (isIcon) {
+			const grid = 90;
+			var x = Math.round(parseInt(item.style.left) / grid) * grid;
+			var y = Math.round(parseInt(item.style.top) / grid) * grid;
+			var good = true;
+			document.querySelectorAll('.icon').forEach((icon) => {
+				if (icon == item) return;
+				var iconx = parseInt(icon.style.left) - 3;
+				var icony = parseInt(icon.style.top);
+				if (x == iconx && y == icony) {
+					good = false;
+					return;
+				}
+			});
+
+			if (good || lastX == undefined) {
+				item.style.left = (x + 3) + 'px';
+				item.style.top = y + 'px';
+				lastX = x;
+				lastY = y;
+			} else {
+				item.style.left = lastX + 'px';
+				item.style.top = lastY + 'px';
+			}
+		}
 	});
 }
 
