@@ -246,7 +246,7 @@ function minimizeWindow(win) {
 // handles maximizing windows
 function maximizeWindow(win) {
 	const maxWidthStr = 'calc(100% - 6px)';
-	const maxHeightStr = 'calc(100% - 30px)';
+	const maxHeightStr = 'calc(100% - 39px)';
 	if (win.style.width == maxWidthStr) {
 		win.style.width = win.dataset.width;
 		win.style.height = win.dataset.height;
@@ -304,6 +304,7 @@ const allowedDragClasses = ['title-bar', 'title-bar-text', 'icon', 'iconimg'];
 function handleDragging(item) {
 	let offsetX, offsetY, isDragging = false;
 	var isIcon = false;
+	var iconUpdate = true;
 	if (item.classList.contains('icon')) {
 		isIcon = true;
 		var lastX, lastY;
@@ -326,12 +327,13 @@ function handleDragging(item) {
 		if (isDragging) {
 			item.style.left = e.clientX - offsetX + 'px';
 			item.style.top = e.clientY - offsetY + 'px';
+			iconUpdate = true;
 		}
 	});
 	document.addEventListener('mouseup', () => {
 		isDragging = false;
 		// snap icon to grid
-		if (isIcon) {
+		if (isIcon && iconUpdate) {
 			const grid = 90;
 			var x = Math.round(parseInt(item.style.left) / grid) * grid;
 			var y = Math.round(parseInt(item.style.top) / grid) * grid;
@@ -349,12 +351,13 @@ function handleDragging(item) {
 			if (good || lastX == undefined) {
 				item.style.left = (x + 3) + 'px';
 				item.style.top = y + 'px';
-				lastX = x;
+				lastX = x + 3;
 				lastY = y;
 			} else {
 				item.style.left = lastX + 'px';
 				item.style.top = lastY + 'px';
 			}
+			iconUpdate = false;
 		}
 	});
 }
