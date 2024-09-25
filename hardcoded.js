@@ -100,6 +100,23 @@ function weekoldroadkill() {
 
 	windowbody.appendChild(document.createElement('br'));
 
+	var flex1 = windowbody.appendChild(document.createElement('div'));
+	flex1.style.display = 'flex';
+	var iframebutton1 = flex1.appendChild(document.createElement('button'));
+	var abut1 = flex1.appendChild(document.createElement('a'));
+	var but1 = abut1.appendChild(document.createElement('button'));
+	abut1.href = '/base-converter/';
+	abut1.target = '_blank';
+	abut1.style.flex = '1';
+	but1.textContent = 'Direct';
+	iframebutton1.textContent = 'Base Converter';
+	iframebutton1.style.flex = '3';
+	iframebutton1.onclick = function() {
+		baseConverterIframe();
+	}
+
+	windowbody.appendChild(document.createElement('br'));
+
 	var flex2 = windowbody.appendChild(document.createElement('div'));
 	flex2.style.display = 'flex';
 	var iframebutton2 = flex2.appendChild(document.createElement('button'));
@@ -143,6 +160,9 @@ function weekoldroadkill() {
 	addWindow(custom, 0, 0, mx = mx);
 }
 
+function baseConverterIframe() {
+	addWindow(simpleIframe('/base-converter/index.html', opts = { title: 'Base Converter', width: 458, height: 385, canResize: false }), 0, 0);
+}
 
 function screaminginsectsIframe() {
 	addWindow(simpleIframe('/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false }), 0, 0);
