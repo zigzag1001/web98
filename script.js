@@ -93,7 +93,7 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
 
 	body.appendChild(win);
 	var winwidth = win.offsetWidth + parseInt(win.style.margin);
-	var winheight = win.offsetHeight + parseInt(win.style.margin) * 2;
+	var winheight = win.offsetHeight + parseInt(win.style.margin);
 
 	if (mx == 0) {
 		mx = window.innerWidth;
@@ -101,12 +101,12 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
 	if (my == 0) {
 		my = window.innerHeight;
 	}
-	mx -= winwidth;
-	my -= winheight - 66;
-	console.log(winwidth, winheight, mx, my)
+	mx -= winwidth + parseInt(win.style.margin) * 2;
+	my -= winheight + 56 + parseInt(win.style.margin) * 2;
 
 	x += Math.floor(Math.random() * mx);
 	y += Math.floor(Math.random() * my);
+
 	win.style.zIndex = maxz++;
 	win.style.left = x + 'px';
 	win.style.top = y + 'px';
