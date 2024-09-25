@@ -100,23 +100,6 @@ function weekoldroadkill() {
 
 	windowbody.appendChild(document.createElement('br'));
 
-	var flex1 = windowbody.appendChild(document.createElement('div'));
-	flex1.style.display = 'flex';
-	var iframebutton = flex1.appendChild(document.createElement('button'));
-	var abut1 = flex1.appendChild(document.createElement('a'));
-	var but1 = abut1.appendChild(document.createElement('button'));
-	abut1.href = '/drones/';
-	abut1.target = '_blank';
-	abut1.style.flex = '1';
-	but1.textContent = 'Direct';
-	iframebutton.textContent = 'Drones';
-	iframebutton.style.flex = '3';
-	iframebutton.onclick = function() {
-		dronesIframe();
-	}
-
-	windowbody.appendChild(document.createElement('br'));
-
 	var flex2 = windowbody.appendChild(document.createElement('div'));
 	flex2.style.display = 'flex';
 	var iframebutton2 = flex2.appendChild(document.createElement('button'));
@@ -156,16 +139,11 @@ function weekoldroadkill() {
 
 	var custom = createWindow({ body: windowbody, title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill' })
 
-	// var x = Math.floor(Math.random() * (window.innerWidth / 2 - 300));
-	// var y = Math.floor(Math.random() * (window.innerHeight * 0.4));
-	//
-	// addWindow(custom, x, y);
-	addWindow(custom, 0, 0, mx = 585, my = 456);
+	var mx = window.innerWidth / 2 - 300;
+	var my = window.innerHeight - 393 - 36;
+	addWindow(custom, 0, 0, mx = mx, my = my);
 }
 
-function dronesIframe() {
-	addWindow(simpleIframe('/drones/index.html', opts = { title: 'Drones', max: true, canResize: false }), 0, 0, mx = 900, my = 380);
-}
 
 function screaminginsectsIframe() {
 	addWindow(simpleIframe('/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false }), 0, 0, mx = 900, my = 380);
@@ -195,10 +173,10 @@ function zigzag1001() {
 
 	var custom = createWindow({ body: windowbody, title: '👑\xa0\xa0\xa0\xa0zigzag1001' })
 
-	var x = Math.floor(Math.random() * (window.innerWidth / 2 - 350) + window.innerWidth / 2);
-	var y = Math.floor(Math.random() * (window.innerHeight * 0.5));
+	var mx = window.innerWidth / 2 - 300;
+	var my = window.innerHeight - 393 - 36;
 
-	addWindow(custom, x, y);
+	addWindow(custom, window.innerWidth / 2, 0, mx = mx, my = my);
 }
 
 // choose random icons

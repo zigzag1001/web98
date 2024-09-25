@@ -96,10 +96,8 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
 	if (my == 0)
 		my = window.innerHeight - 240;
 
-	if (x == 0 && y == 0) {
-		x = Math.floor(Math.random() * mx);
-		y = Math.floor(Math.random() * my);
-	}
+	x += Math.floor(Math.random() * mx);
+	y += Math.floor(Math.random() * my);
 	win.style.zIndex = maxz++;
 	win.style.left = x + 'px';
 	win.style.top = y + 'px';
