@@ -91,17 +91,25 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
 
 	taskbar(win, 'add');
 
-	if (mx == 0)
-		mx = window.innerWidth - 500;
-	if (my == 0)
-		my = window.innerHeight - 240;
+	body.appendChild(win);
+	var winwidth = win.offsetWidth + parseInt(win.style.margin);
+	var winheight = win.offsetHeight + parseInt(win.style.margin) * 2;
+
+	if (mx == 0) {
+		mx = window.innerWidth;
+	}
+	if (my == 0) {
+		my = window.innerHeight;
+	}
+	mx -= winwidth;
+	my -= winheight - 66;
+	console.log(winwidth, winheight, mx, my)
 
 	x += Math.floor(Math.random() * mx);
 	y += Math.floor(Math.random() * my);
 	win.style.zIndex = maxz++;
 	win.style.left = x + 'px';
 	win.style.top = y + 'px';
-	body.appendChild(win);
 
 	if (win.dataset.max) {
 		maximizeWindow(win);
@@ -149,15 +157,7 @@ function randwin() {
 		removeWindow(div);
 	};
 
-	let screenWidth = window.innerWidth;
-	let screenHeight = window.innerHeight;
-	let winWidth = 256;
-	let winHeight = 240;
-
-	let x = Math.floor(Math.random() * (screenWidth - winWidth));
-	let y = Math.floor(Math.random() * (screenHeight - winHeight));
-
-	addWindow(div, x, y);
+	addWindow(div, 0, 0);
 
 	setTimeout(() => {
 		div.classList.remove('animate__' + intro);

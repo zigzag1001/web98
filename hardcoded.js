@@ -139,18 +139,17 @@ function weekoldroadkill() {
 
 	var custom = createWindow({ body: windowbody, title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill' })
 
-	var mx = window.innerWidth / 2 - 300;
-	var my = window.innerHeight - 393 - 36;
-	addWindow(custom, 0, 0, mx = mx, my = my);
+	var mx = window.innerWidth / 2;
+	addWindow(custom, 0, 0, mx = mx);
 }
 
 
 function screaminginsectsIframe() {
-	addWindow(simpleIframe('/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false }), 0, 0, mx = 900, my = 380);
+	addWindow(simpleIframe('/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false }), 0, 0);
 }
 
 function SaSoIframe() {
-	addWindow(simpleIframe('/saso/', opts = { title: 'SaSo', max: false, canResize: false, height: 565 }), 0, 0, mx = 900, my = 380);
+	addWindow(simpleIframe('/saso/', opts = { title: 'SaSo', max: false, canResize: false, height: 565 }), 0, 0);
 }
 
 function zigzag1001() {
@@ -173,10 +172,9 @@ function zigzag1001() {
 
 	var custom = createWindow({ body: windowbody, title: '👑\xa0\xa0\xa0\xa0zigzag1001' })
 
-	var mx = window.innerWidth / 2 - 300;
-	var my = window.innerHeight - 393 - 36;
+	var mx = window.innerWidth / 2;
 
-	addWindow(custom, window.innerWidth / 2, 0, mx = mx, my = my);
+	addWindow(custom, window.innerWidth / 2, 0, mx = mx);
 }
 
 // choose random icons
