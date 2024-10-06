@@ -103,6 +103,12 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
 	}
 	mx -= winwidth + parseInt(win.style.margin) * 2;
 	my -= winheight + 56 + parseInt(win.style.margin) * 2;
+	if (mx < 0) {
+		mx = 0;
+	}
+	if (my < 0) {
+		my = 0;
+	}
 
 	x += Math.floor(Math.random() * mx);
 	y += Math.floor(Math.random() * my);
@@ -553,7 +559,7 @@ addIcon(closeAllIcon);
 
 // recursive window
 addIcon(createIcon(null, 'da heaeell', () => {
-	addWindow(simpleIframe('http://weekoldroadkill.com', { title: 'nahhh', max: false }));
+	addWindow(simpleIframe('https://weekoldroadkill.com', { title: 'nahhh', max: false }));
 }));
 
 // opts: title, width, height

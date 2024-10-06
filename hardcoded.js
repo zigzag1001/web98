@@ -134,10 +134,6 @@ function weekoldroadkill() {
 
 	windowbody.appendChild(document.createElement('br'));
 
-	// var abut3 = windowbody.appendChild(document.createElement('a'));
-	// var but3 = abut3.appendChild(document.createElement('button'));
-	// abut3.href = '/saso/';
-	// abut3.target = '_blank';
 	var but3 = windowbody.appendChild(document.createElement('button'));
 	but3.onclick = function() {
 		SaSoIframe();
@@ -161,11 +157,11 @@ function weekoldroadkill() {
 }
 
 function baseConverterIframe() {
-	addWindow(simpleIframe('/base-converter/index.html', opts = { title: 'Base Converter', width: 458, height: 385, canResize: false }), 0, 0);
+	addWindow(simpleIframe('/base-converter/index.html', opts = { title: 'Base Converter', width: 271, height: 347, canResize: false }), 0, 0);
 }
 
 function screaminginsectsIframe() {
-	addWindow(simpleIframe('/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false }), 0, 0);
+	addWindow(simpleIframe('/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
 }
 
 function SaSoIframe() {
