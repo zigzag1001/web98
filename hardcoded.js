@@ -70,15 +70,15 @@ function customWin() {
 	in_winbody.style.padding = '5px';
 	submit.textContent = 'Submit';
 	submit.onclick = function() {
+		var currentwindow = windowbody.closest('.window');
+		var x = parseInt(currentwindow.style.left);
+		var y = parseInt(currentwindow.style.top);
 		removeWindow(windowbody.closest('.window'));
 		var div = createWindow({
 			title: in_winname.value,
 			body: simplebody(in_winbody.value)
 		});
 		div.classList.add('customwin');
-		var currentwindow = windowbody.closest('.window');
-		var x = currentwindow.getBoundingClientRect().left + parseInt(currentwindow.style.margin.substring(0, currentwindow.style.margin.length - 2));
-		var y = currentwindow.getBoundingClientRect().top + parseInt(currentwindow.style.margin.substring(0, currentwindow.style.margin.length - 2));
 		addWindow(div, x, y);
 	}
 
@@ -134,6 +134,23 @@ function weekoldroadkill() {
 
 	windowbody.appendChild(document.createElement('br'));
 
+	var flex3 = windowbody.appendChild(document.createElement('div'));
+	flex3.style.display = 'flex';
+	var iframebutton3 = flex3.appendChild(document.createElement('button'));
+	var abut3 = flex3.appendChild(document.createElement('a'));
+	var but3 = abut3.appendChild(document.createElement('button'));
+	abut3.href = '/traveling-salesman/';
+	abut3.target = '_blank';
+	abut3.style.flex = '1';
+	but3.textContent = 'Direct';
+	iframebutton3.textContent = 'Traveling Salesman';
+	iframebutton3.style.flex = '3';
+	iframebutton3.onclick = function() {
+		travelingsalesmanIframe();
+	}
+
+	windowbody.appendChild(document.createElement('br'));
+
 	var but3 = windowbody.appendChild(document.createElement('button'));
 	but3.onclick = function() {
 		SaSoIframe();
@@ -154,6 +171,10 @@ function weekoldroadkill() {
 
 	var mx = window.innerWidth / 2;
 	addWindow(custom, 0, 0, mx = mx);
+}
+
+function travelingsalesmanIframe() {
+	addWindow(simpleIframe('/traveling-salesman/index.html', opts = { title: 'Traveling Salesman', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
 }
 
 function baseConverterIframe() {
@@ -180,6 +201,23 @@ function zigzag1001() {
 
 	windowbody.appendChild(document.createElement('br'));
 
+	var flex1 = windowbody.appendChild(document.createElement('div'));
+	flex1.style.display = 'flex';
+	var iframebutton1 = flex1.appendChild(document.createElement('button'));
+	var abut1 = flex1.appendChild(document.createElement('a'));
+	var but1 = abut1.appendChild(document.createElement('button'));
+	abut1.href = '/pixelWind/';
+	abut1.target = '_blank';
+	abut1.style.flex = '1';
+	but1.textContent = 'Direct';
+	iframebutton1.textContent = 'pixelWind';
+	iframebutton1.style.flex = '3';
+	iframebutton1.onclick = function() {
+		pixelWindIframe();
+	}
+
+	windowbody.appendChild(document.createElement('br'));
+
 	var abut1 = windowbody.appendChild(document.createElement('a'));
 	var but1 = abut1.appendChild(document.createElement('button'));
 	abut1.href = 'https://github.com/zigzag1001';
@@ -191,6 +229,10 @@ function zigzag1001() {
 	var mx = window.innerWidth / 2;
 
 	addWindow(custom, window.innerWidth / 2, 0, mx = mx);
+}
+
+function pixelWindIframe() {
+	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: true, canResize: false, height: 612, width: 1044 }), 0, 0);
 }
 
 // choose random icons
