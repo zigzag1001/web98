@@ -197,7 +197,7 @@ function zigzag1001() {
 	wincontainer.className = 'profileImgContainer';
 	var img = wincontainer.appendChild(document.createElement('img'));
 	// img.src = 'https://avatars.githubusercontent.com/u/72932714?v=4';
-	img.src = '/img/pfp.gif';
+	img.src = './img/pfp.gif';
 
 	windowbody.appendChild(document.createElement('br'));
 
