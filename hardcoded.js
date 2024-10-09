@@ -89,6 +89,9 @@ function customWin() {
 }
 
 
+const WURL = 'https://weekoldroadkill.com'
+
+
 function weekoldroadkill() {
 	var windowbody = document.createElement('div');
 	windowbody.className = 'window-body profile';
@@ -105,7 +108,7 @@ function weekoldroadkill() {
 	var iframebutton1 = flex1.appendChild(document.createElement('button'));
 	var abut1 = flex1.appendChild(document.createElement('a'));
 	var but1 = abut1.appendChild(document.createElement('button'));
-	abut1.href = '/base-converter/';
+	abut1.href = WURL + '/base-converter/';
 	abut1.target = '_blank';
 	abut1.style.flex = '1';
 	but1.textContent = 'Direct';
@@ -122,7 +125,7 @@ function weekoldroadkill() {
 	var iframebutton2 = flex2.appendChild(document.createElement('button'));
 	var abut2 = flex2.appendChild(document.createElement('a'));
 	var but2 = abut2.appendChild(document.createElement('button'));
-	abut2.href = '/screaming-insects/';
+	abut2.href = WURL + '/screaming-insects/';
 	abut2.target = '_blank';
 	abut2.style.flex = '1';
 	but2.textContent = 'Direct';
@@ -139,7 +142,7 @@ function weekoldroadkill() {
 	var iframebutton3 = flex3.appendChild(document.createElement('button'));
 	var abut3 = flex3.appendChild(document.createElement('a'));
 	var but3 = abut3.appendChild(document.createElement('button'));
-	abut3.href = '/traveling-salesman/';
+	abut3.href = WURL + '/traveling-salesman/';
 	abut3.target = '_blank';
 	abut3.style.flex = '1';
 	but3.textContent = 'Direct';
@@ -174,15 +177,15 @@ function weekoldroadkill() {
 }
 
 function travelingsalesmanIframe() {
-	addWindow(simpleIframe('/traveling-salesman/index.html', opts = { title: 'Traveling Salesman', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/traveling-salesman/index.html', opts = { title: 'Traveling Salesman', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
 }
 
 function baseConverterIframe() {
-	addWindow(simpleIframe('/base-converter/index.html', opts = { title: 'Base Converter', width: 271, height: 347, canResize: false }), 0, 0);
+	addWindow(simpleIframe(WURL + '/base-converter/index.html', opts = { title: 'Base Converter', width: 271, height: 347, canResize: false }), 0, 0);
 }
 
 function screaminginsectsIframe() {
-	addWindow(simpleIframe('/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
 }
 
 function SaSoIframe() {
@@ -218,6 +221,23 @@ function zigzag1001() {
 
 	windowbody.appendChild(document.createElement('br'));
 
+	var flex2 = windowbody.appendChild(document.createElement('div'));
+	flex2.style.display = 'flex';
+	var iframebutton2 = flex2.appendChild(document.createElement('button'));
+	var abut2 = flex2.appendChild(document.createElement('a'));
+	var but2 = abut2.appendChild(document.createElement('button'));
+	abut2.href = 'https://github.com/zigzag1001/web98';
+	abut2.target = '_blank';
+	abut2.style.flex = '1';
+	but2.textContent = 'web98';
+	iframebutton2.textContent = 'This Website';
+	iframebutton2.style.flex = '3';
+	iframebutton2.onclick = function() {
+		web98Iframe();
+	}
+
+	windowbody.appendChild(document.createElement('br'));
+
 	var abut1 = windowbody.appendChild(document.createElement('a'));
 	var but1 = abut1.appendChild(document.createElement('button'));
 	abut1.href = 'https://github.com/zigzag1001';
@@ -235,6 +255,10 @@ function pixelWindIframe() {
 	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: true, canResize: false, height: 612, width: 1044 }), 0, 0);
 }
 
+function web98Iframe() {
+	addWindow(simpleIframe('/web98/index.html', opts = { title: 'web98', max: true, canResize: false, height: 612, width: 1044 }), 0, 0);
+}
+
 // choose random icons
 var icons = ["doctor_watson.png", "msagent-3.png", "msagent_file-1.png", "accessibility-4.png", "address_book_user.png", "users_key-2.png"]
 var zigzag1001icon = icons[Math.floor(Math.random() * icons.length)];
@@ -245,6 +269,26 @@ var weekoldroadkillicon = icons[Math.floor(Math.random() * icons.length)];
 addIcon(createIcon(weekoldroadkillicon, 'weekOldRoadkill', weekoldroadkill));
 //zigzag1001
 addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
+
+function shuffleArray(array) {
+	for (let i = array.length - 1; i >= 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}
+
+var apps = [createIcon('msg_warning-0.png', 'Random Windows', randomWinodws),
+createIcon('internet_connection_wiz-4.png', 'Custom Window', customWin),
+createIcon('defragment-0.png', 'pixelWind', pixelWindIframe),
+
+createIcon('accessibility_big_keys.png', 'Base Converter', baseConverterIframe),
+createIcon('msn3-5.png', 'Screaming Insects', screaminginsectsIframe),
+createIcon('gears-0.png', 'Traveling Salesman', travelingsalesmanIframe),
+];
+shuffleArray(apps);
+for (var i = 0; i < apps.length; i++) {
+	addIcon(apps[i]);
+}
 
 // addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'))
 // addWindow(simpleImage('https://camo.githubusercontent.com/ed3b0212c8a48e5115aa87c48e4fc5fccf3d602f9dbd95bf460d895a91c47576/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))

@@ -558,7 +558,7 @@ var closeAllIcon = createIcon('msg_error-0.png', 'Close All', closeAll);
 addIcon(closeAllIcon);
 
 // recursive window
-addIcon(createIcon(null, 'da heaeell', () => {
+addIcon(createIcon(null, 'web98', () => {
 	addWindow(simpleIframe('https://weekoldroadkill.com', { title: 'nahhh', max: false }));
 }));
 
