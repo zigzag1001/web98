@@ -209,10 +209,10 @@ function zigzag1001() {
 	var iframebutton1 = flex1.appendChild(document.createElement('button'));
 	var abut1 = flex1.appendChild(document.createElement('a'));
 	var but1 = abut1.appendChild(document.createElement('button'));
-	abut1.href = '/pixelWind/';
+	abut1.href = 'https://github.com/zigzag1001/pixelWind/tree/wasm';
 	abut1.target = '_blank';
 	abut1.style.flex = '1';
-	but1.textContent = 'Direct';
+	but1.textContent = 'Source';
 	iframebutton1.textContent = 'pixelWind';
 	iframebutton1.style.flex = '3';
 	iframebutton1.onclick = function() {
@@ -259,23 +259,24 @@ function web98Iframe() {
 	addWindow(simpleIframe('/web98/index.html', opts = { title: 'web98', max: true, canResize: false, height: 612, width: 1044 }), 0, 0);
 }
 
-// choose random icons
-var icons = ["doctor_watson.png", "msagent-3.png", "msagent_file-1.png", "accessibility-4.png", "address_book_user.png", "users_key-2.png"]
-var zigzag1001icon = icons[Math.floor(Math.random() * icons.length)];
-delete icons[zigzag1001icon];
-var weekoldroadkillicon = icons[Math.floor(Math.random() * icons.length)];
-
-//weekoldroadkill
-addIcon(createIcon(weekoldroadkillicon, 'weekOldRoadkill', weekoldroadkill));
-//zigzag1001
-addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
-
 function shuffleArray(array) {
 	for (let i = array.length - 1; i >= 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }
+
+// choose random icons
+var icons = ["doctor_watson.png", "msagent-3.png", "msagent_file-1.png", "address_book_user.png", "msagent-4.png", "utopia_smiley.png", "media_player_stream_sun4.png"]
+shuffleArray(icons);
+var zigzag1001icon = icons[0];
+var weekoldroadkillicon = icons[1];
+
+//weekoldroadkill
+addIcon(createIcon(weekoldroadkillicon, 'weekOldRoadkill', weekoldroadkill));
+//zigzag1001
+addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
+
 
 var apps = [createIcon('msg_warning-0.png', 'Random Windows', randomWinodws),
 createIcon('internet_connection_wiz-4.png', 'Custom Window', customWin),
