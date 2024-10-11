@@ -92,7 +92,7 @@ function customWin() {
 const WURL = 'https://weekoldroadkill.com'
 
 
-function weekoldroadkill() {
+function weekoldroadkill(halfpage = true) {
 	var windowbody = document.createElement('div');
 	windowbody.className = 'window-body profile';
 
@@ -103,54 +103,91 @@ function weekoldroadkill() {
 
 	windowbody.appendChild(document.createElement('br'));
 
+	// Row 1
 	var flex1 = windowbody.appendChild(document.createElement('div'));
 	flex1.style.display = 'flex';
+	// iframe
 	var iframebutton1 = flex1.appendChild(document.createElement('button'));
-	var abut1 = flex1.appendChild(document.createElement('a'));
-	var but1 = abut1.appendChild(document.createElement('button'));
-	abut1.href = WURL + '/base-converter/';
-	abut1.target = '_blank';
-	abut1.style.flex = '1';
-	but1.textContent = 'Direct';
 	iframebutton1.textContent = 'Base Converter';
 	iframebutton1.style.flex = '3';
 	iframebutton1.onclick = function() {
 		baseConverterIframe();
 	}
+	// source
+	var asbut = flex1.appendChild(document.createElement('a'));
+	var sbut = asbut.appendChild(document.createElement('button'));
+	asbut.href = 'https://gitlab.com/weekOldRoadkill/base-converter';
+	asbut.target = '_blank';
+	asbut.style.flex = '1';
+	sbut.textContent = 'Source';
+	sbut.style.minWidth = '0';
+	// direct site
+	var abut1 = flex1.appendChild(document.createElement('a'));
+	var but1 = abut1.appendChild(document.createElement('button'));
+	abut1.href = WURL + '/base-converter/';
+	abut1.target = '_blank';
+	abut1.style.flex = '1';
+	but1.textContent = 'Site';
+	but1.style.minWidth = '0';
 
 	windowbody.appendChild(document.createElement('br'));
 
+	// Row 2
 	var flex2 = windowbody.appendChild(document.createElement('div'));
 	flex2.style.display = 'flex';
+	// iframe
 	var iframebutton2 = flex2.appendChild(document.createElement('button'));
-	var abut2 = flex2.appendChild(document.createElement('a'));
-	var but2 = abut2.appendChild(document.createElement('button'));
-	abut2.href = WURL + '/screaming-insects/';
-	abut2.target = '_blank';
-	abut2.style.flex = '1';
-	but2.textContent = 'Direct';
 	iframebutton2.textContent = 'Screaming Insects';
 	iframebutton2.style.flex = '3';
 	iframebutton2.onclick = function() {
 		screaminginsectsIframe();
 	}
+	// source
+	var asbut2 = flex2.appendChild(document.createElement('a'));
+	var sbut2 = asbut2.appendChild(document.createElement('button'));
+	asbut2.href = 'https://gitlab.com/weekOldRoadkill/screaming-insects';
+	asbut2.target = '_blank';
+	asbut2.style.flex = '1';
+	sbut2.textContent = 'Source';
+	sbut2.style.minWidth = '0';
+	// direct site
+	var abut2 = flex2.appendChild(document.createElement('a'));
+	var but2 = abut2.appendChild(document.createElement('button'));
+	abut2.href = WURL + '/screaming-insects/';
+	abut2.target = '_blank';
+	abut2.style.flex = '1';
+	but2.textContent = 'Site';
+	but2.style.minWidth = '0';
 
 	windowbody.appendChild(document.createElement('br'));
 
+	// Row 3
 	var flex3 = windowbody.appendChild(document.createElement('div'));
 	flex3.style.display = 'flex';
+	// iframe
 	var iframebutton3 = flex3.appendChild(document.createElement('button'));
+	iframebutton3.textContent = 'Traveling Salesman';
+	iframebutton3.style.flex = '3';
+	iframebutton3.style.padding = '0';
+	iframebutton3.onclick = function() {
+		travelingsalesmanIframe();
+	}
+	// source
+	var asbut3 = flex3.appendChild(document.createElement('a'));
+	var sbut3 = asbut3.appendChild(document.createElement('button'));
+	asbut3.href = 'https://gitlab.com/weekOldRoadkill/traveling-salesman';
+	asbut3.target = '_blank';
+	asbut3.style.flex = '1';
+	sbut3.textContent = 'Source';
+	sbut3.style.minWidth = '0';
+	// direct site
 	var abut3 = flex3.appendChild(document.createElement('a'));
 	var but3 = abut3.appendChild(document.createElement('button'));
 	abut3.href = WURL + '/traveling-salesman/';
 	abut3.target = '_blank';
 	abut3.style.flex = '1';
-	but3.textContent = 'Direct';
-	iframebutton3.textContent = 'Traveling Salesman';
-	iframebutton3.style.flex = '3';
-	iframebutton3.onclick = function() {
-		travelingsalesmanIframe();
-	}
+	but3.textContent = 'Site';
+	but3.style.minWidth = '0';
 
 	windowbody.appendChild(document.createElement('br'));
 
@@ -172,8 +209,12 @@ function weekoldroadkill() {
 
 	var custom = createWindow({ body: windowbody, title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill' })
 
-	var mx = window.innerWidth / 2;
-	addWindow(custom, 0, 0, mx = mx);
+	if (halfpage) {
+		var mx = window.innerWidth / 2;
+		addWindow(custom, 0, 0, mx = mx);
+	} else {
+		addWindow(custom);
+	}
 }
 
 function travelingsalesmanIframe() {
@@ -192,7 +233,7 @@ function SaSoIframe() {
 	addWindow(simpleIframe('/saso/', opts = { title: 'SaSo', max: false, canResize: false, height: 565 }), 0, 0);
 }
 
-function zigzag1001() {
+function zigzag1001(halfpage = true) {
 	var windowbody = document.createElement('div');
 	windowbody.className = 'window-body profile';
 
@@ -246,9 +287,12 @@ function zigzag1001() {
 
 	var custom = createWindow({ body: windowbody, title: '👑\xa0\xa0\xa0\xa0zigzag1001' })
 
-	var mx = window.innerWidth / 2;
-
-	addWindow(custom, window.innerWidth / 2, 0, mx = mx);
+	if (halfpage) {
+		var mx = window.innerWidth / 2;
+		addWindow(custom, window.innerWidth / 2, 0, mx = mx);
+	} else {
+		addWindow(custom);
+	}
 }
 
 function pixelWindIframe() {
@@ -296,20 +340,49 @@ for (var i = 0; i < apps.length; i++) {
 
 
 window.onload = function() {
+	const query = new URLSearchParams(window.location.search);
+
 	numprofiles = 30;
-	// numprofiles = 2;
+	singlenumprofiles = 5;
 	i = 0;
-	const interval = setInterval(function() {
-		if (i % 2 == 0) {
-			weekoldroadkill();
-		} else {
-			zigzag1001();
+	if (query.has('z')) {
+		const interval = setInterval(function() {
+			zigzag1001(false);
+			i++;
+			if (i >= singlenumprofiles) {
+				clearInterval(interval);
+			}
+		}, 86);
+	} else if (query.has('w')) {
+		const interval = setInterval(function() {
+			weekoldroadkill(false);
+			i++;
+			if (i >= singlenumprofiles) {
+				clearInterval(interval);
+			}
+		}, 86);
+	} else if (query.has('rw')) {
+		randomWinodws();
+	} else if (!query.has('z') && !query.has('w') && !query.has('no')) {
+		const interval = setInterval(function() {
+			if (i % 2 == 0) {
+				weekoldroadkill();
+			} else {
+				zigzag1001();
+			}
+			i++;
+			if (i >= numprofiles) {
+				clearInterval(interval);
+			}
+		}, 43);
+	}
+
+	if (query.has('app')) {
+		var app = query.get('app');
+		if (app == 'pixelwind') {
+			pixelWindIframe();
 		}
-		i++;
-		if (i >= numprofiles) {
-			clearInterval(interval);
-		}
-	}, 43);
+	}
 	var clock = document.querySelector('.clock');
 	clock.innerHTML = "📅 " + new Date().toLocaleTimeString();
 }

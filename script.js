@@ -545,11 +545,11 @@ function addIcon(icon) {
 	icon.style.top = icony + 'px';
 	document.querySelector('.desktop').appendChild(icon);
 	var iconheight = icon.offsetHeight;
-	if (icony < 810) {
+	if (icony < 700) {
 		icony += iconheight + 16;
 	} else {
 		icony = 0;
-		iconx += 84;
+		iconx += 90;
 	}
 }
 
