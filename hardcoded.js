@@ -346,6 +346,10 @@ window.onload = function() {
 	singlenumprofiles = 3;
 	i = 0;
 	if (query.has('z')) {
+		var tmp = query.get('z');
+		if (tmp > 0) {
+			singlenumprofiles = tmp;
+		}
 		const interval = setInterval(function() {
 			zigzag1001(false);
 			i++;
@@ -354,6 +358,10 @@ window.onload = function() {
 			}
 		}, 86);
 	} else if (query.has('w')) {
+		var tmp = query.get('w');
+		if (tmp > 0) {
+			singlenumprofiles = tmp;
+		}
 		const interval = setInterval(function() {
 			weekoldroadkill(false);
 			i++;
