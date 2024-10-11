@@ -295,8 +295,8 @@ function zigzag1001(halfpage = true) {
 	}
 }
 
-function pixelWindIframe() {
-	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: true, canResize: false, height: 612, width: 1044 }), 0, 0);
+function pixelWindIframe(max = true) {
+	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: max, canResize: false, height: 612, width: 1044 }), 0, 0);
 }
 
 function web98Iframe() {
@@ -343,7 +343,7 @@ window.onload = function() {
 	const query = new URLSearchParams(window.location.search);
 
 	numprofiles = 30;
-	singlenumprofiles = 5;
+	singlenumprofiles = 3;
 	i = 0;
 	if (query.has('z')) {
 		const interval = setInterval(function() {
@@ -380,7 +380,7 @@ window.onload = function() {
 	if (query.has('app')) {
 		var app = query.get('app');
 		if (app == 'pixelwind') {
-			pixelWindIframe();
+			pixelWindIframe(false);
 		}
 	}
 	var clock = document.querySelector('.clock');
