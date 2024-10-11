@@ -212,7 +212,7 @@
 	cursor: se-resize;
 	user-select: none;
 	/* background-image: url(/img/corner.png); */
-	background-image: url(/img/corner.svg);
+	background-image: url(./img/corner.svg);
 	background-size: contain;
 }
 
