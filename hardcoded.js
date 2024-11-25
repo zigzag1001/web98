@@ -371,7 +371,7 @@ function zigzag1001(halfpage = true) {
 }
 
 function pixelWindIframe(max = true) {
-	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: max, canResize: false, height: 612, width: 1044 }), 0, 0);
+	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: max, canResize: false, height: 719, width: 1249 }), 0, 0);
 }
 
 function web98Iframe() {
