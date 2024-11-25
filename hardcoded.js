@@ -70,16 +70,13 @@ function customWin() {
 	in_winbody.style.padding = '5px';
 	submit.textContent = 'Submit';
 	submit.onclick = function() {
-		var currentwindow = windowbody.closest('.window');
-		var x = parseInt(currentwindow.style.left);
-		var y = parseInt(currentwindow.style.top);
 		removeWindow(windowbody.closest('.window'));
 		var div = createWindow({
 			title: in_winname.value,
 			body: simplebody(in_winbody.value)
 		});
 		div.classList.add('customwin');
-		addWindow(div, x, y);
+		addWindow(div);
 	}
 
 	var custom = createWindow({ body: windowbody, title: 'Create Custom Window' })
@@ -90,6 +87,7 @@ function customWin() {
 
 
 const WURL = 'https://weekoldroadkill.com'
+const ZURL = 'https://zigzag.weekoldroadkill.com'
 
 
 function weekoldroadkill(halfpage = true) {
@@ -191,20 +189,89 @@ function weekoldroadkill(halfpage = true) {
 
 	windowbody.appendChild(document.createElement('br'));
 
-	var but3 = windowbody.appendChild(document.createElement('button'));
-	but3.onclick = function() {
+	// Row 4
+	var flex4 = windowbody.appendChild(document.createElement('div'));
+	flex4.style.display = 'flex';
+	// iframe
+	var iframebutton4 = flex4.appendChild(document.createElement('button'));
+	iframebutton4.textContent = 'Kinematics';
+	iframebutton4.style.flex = '3';
+	iframebutton4.onclick = function() {
+		inverseKinematicsIframe();
+	}
+	// source
+	var asbut4 = flex4.appendChild(document.createElement('a'));
+	var sbut4 = asbut4.appendChild(document.createElement('button'));
+	asbut4.href = 'https://gitlab.com/weekOldRoadkill/inverse-kinematics';
+	asbut4.target = '_blank';
+	asbut4.style.flex = '1';
+	sbut4.textContent = 'Source';
+	sbut4.style.minWidth = '0';
+	// direct site
+	var abut4 = flex4.appendChild(document.createElement('a'));
+	var but4 = abut4.appendChild(document.createElement('button'));
+	abut4.href = WURL + '/inverse-kinematics/';
+	abut4.target = '_blank';
+	abut4.style.flex = '1';
+	but4.textContent = 'Site';
+	but4.style.minWidth = '0';
+
+	windowbody.appendChild(document.createElement('br'));
+
+	// Row 5
+	var flex5 = windowbody.appendChild(document.createElement('div'));
+	flex5.style.display = 'flex';
+	// iframe
+	var iframebutton5 = flex5.appendChild(document.createElement('button'));
+	iframebutton5.textContent = 'Sorting';
+	iframebutton5.style.flex = '3';
+	iframebutton5.onclick = function() {
+		sortingIframe();
+	}
+	// source
+	var asbut5 = flex5.appendChild(document.createElement('a'));
+	var sbut5 = asbut5.appendChild(document.createElement('button'));
+	asbut5.href = 'https://gitlab.com/weekOldRoadkill/sorting';
+	asbut5.target = '_blank';
+	asbut5.style.flex = '1';
+	sbut5.textContent = 'Source';
+	sbut5.style.minWidth = '0';
+	// direct site
+	var abut5 = flex5.appendChild(document.createElement('a'));
+	var but5 = abut5.appendChild(document.createElement('button'));
+	abut5.href = WURL + '/sorting/';
+	abut5.target = '_blank';
+	abut5.style.flex = '1';
+	but5.textContent = 'Site';
+	but5.style.minWidth = '0';
+
+	windowbody.appendChild(document.createElement('br'));
+
+	// SASO
+	var flex5 = windowbody.appendChild(document.createElement('div'));
+	flex5.style.display = 'flex';
+	// iframe
+	var but5 = flex5.appendChild(document.createElement('button'));
+	but5.onclick = function() {
 		SaSoIframe();
 	}
-	but3.textContent = 'SaSo';
+	but5.textContent = 'SaSo Media';
+	but5.style.flex = '3';
+	// site
+	var abut5 = flex5.appendChild(document.createElement('a'));
+	var but5 = abut5.appendChild(document.createElement('button'));
+	abut5.href = WURL + '/saso-media/';
+	abut5.target = '_blank';
+	abut5.style.flex = '1';
+	but5.textContent = 'Site';
 
 	windowbody.appendChild(document.createElement('br'));
-	windowbody.appendChild(document.createElement('br'));
 
-	var abut4 = windowbody.appendChild(document.createElement('a'));
-	var but4 = abut4.appendChild(document.createElement('button'));
-	abut4.href = 'https://gitlab.com/weekOldRoadkill';
-	abut4.target = '_blank';
-	but4.textContent = 'GitLab';
+	var abut5 = windowbody.appendChild(document.createElement('a'));
+	var but5 = abut5.appendChild(document.createElement('button'));
+	abut5.href = 'https://gitlab.com/weekOldRoadkill';
+	abut5.target = '_blank';
+	but5.textContent = 'GitLab';
 
 
 	var custom = createWindow({ body: windowbody, title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill' })
@@ -229,8 +296,16 @@ function screaminginsectsIframe() {
 	addWindow(simpleIframe(WURL + '/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
 }
 
+function inverseKinematicsIframe() {
+	addWindow(simpleIframe(WURL + '/inverse-kinematics/', opts = { title: 'Inverse Kinematics', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+}
+
 function SaSoIframe() {
-	addWindow(simpleIframe('/saso/', opts = { title: 'SaSo', max: false, canResize: false, height: 565 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/saso-media/', opts = { title: 'SaSo Media', max: false, canResize: false, height: 565 }), 0, 0);
+}
+
+function sortingIframe() {
+	addWindow(simpleIframe(WURL + '/sorting/', opts = { title: 'Sorting', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
 }
 
 function zigzag1001(halfpage = true) {
@@ -254,7 +329,7 @@ function zigzag1001(halfpage = true) {
 	abut1.target = '_blank';
 	abut1.style.flex = '1';
 	but1.textContent = 'Source';
-	iframebutton1.textContent = 'pixelWind';
+	iframebutton1.textContent = 'Pixel Wind';
 	iframebutton1.style.flex = '3';
 	iframebutton1.onclick = function() {
 		pixelWindIframe();
@@ -270,7 +345,7 @@ function zigzag1001(halfpage = true) {
 	abut2.href = 'https://github.com/zigzag1001/web98';
 	abut2.target = '_blank';
 	abut2.style.flex = '1';
-	but2.textContent = 'web98';
+	but2.textContent = 'Source';
 	iframebutton2.textContent = 'This Website';
 	iframebutton2.style.flex = '3';
 	iframebutton2.onclick = function() {
