@@ -247,25 +247,6 @@ function weekoldroadkill(halfpage = true) {
 
 	windowbody.appendChild(document.createElement('br'));
 
-	// SASO
-	var flex5 = windowbody.appendChild(document.createElement('div'));
-	flex5.style.display = 'flex';
-	// iframe
-	var but5 = flex5.appendChild(document.createElement('button'));
-	but5.onclick = function() {
-		SaSoIframe();
-	}
-	but5.textContent = 'SaSo Media';
-	but5.style.flex = '3';
-	// site
-	var abut5 = flex5.appendChild(document.createElement('a'));
-	var but5 = abut5.appendChild(document.createElement('button'));
-	abut5.href = WURL + '/saso-media/';
-	abut5.target = '_blank';
-	abut5.style.flex = '1';
-	but5.textContent = 'Site';
-
-	windowbody.appendChild(document.createElement('br'));
 
 	var abut5 = windowbody.appendChild(document.createElement('a'));
 	var but5 = abut5.appendChild(document.createElement('button'));
@@ -298,10 +279,6 @@ function screaminginsectsIframe() {
 
 function inverseKinematicsIframe() {
 	addWindow(simpleIframe(WURL + '/inverse-kinematics/', opts = { title: 'Inverse Kinematics', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
-}
-
-function SaSoIframe() {
-	addWindow(simpleIframe(WURL + '/saso-media/', opts = { title: 'SaSo Media', max: false, canResize: false, height: 565 }), 0, 0);
 }
 
 function sortingIframe() {
