@@ -86,6 +86,39 @@ function customWin() {
 }
 
 
+function createFlexRow(parent, buttonText, iframeCallback, sourceUrl, siteUrl) {
+	var flexRow = parent.appendChild(document.createElement('div'));
+	flexRow.style.display = 'flex';
+
+	// Iframe button
+	var iframeButton = flexRow.appendChild(document.createElement('button'));
+	iframeButton.textContent = buttonText;
+	iframeButton.style.flex = '3';
+	iframeButton.style.padding = '0px'
+	iframeButton.onclick = iframeCallback;
+
+	// Source link
+	var sourceLink = flexRow.appendChild(document.createElement('a'));
+	var sourceButton = sourceLink.appendChild(document.createElement('button'));
+	sourceLink.href = sourceUrl;
+	sourceLink.target = '_blank';
+	sourceLink.style.flex = '1';
+	sourceButton.textContent = 'Source';
+	sourceButton.style.minWidth = '0';
+
+	// Direct site link
+	var siteLink = flexRow.appendChild(document.createElement('a'));
+	var siteButton = siteLink.appendChild(document.createElement('button'));
+	siteLink.href = siteUrl;
+	siteLink.target = '_blank';
+	siteLink.style.flex = '1';
+	siteButton.textContent = 'Site';
+	siteButton.style.minWidth = '0';
+
+	parent.appendChild(document.createElement('br'));
+}
+
+
 const WURL = 'https://weekoldroadkill.com'
 const ZURL = 'https://zigzag.weekoldroadkill.com'
 
@@ -101,159 +134,33 @@ function weekoldroadkill(halfpage = true) {
 
 	windowbody.appendChild(document.createElement('br'));
 
-	// Row 1
-	var flex1 = windowbody.appendChild(document.createElement('div'));
-	flex1.style.display = 'flex';
-	// iframe
-	var iframebutton1 = flex1.appendChild(document.createElement('button'));
-	iframebutton1.textContent = 'Base Converter';
-	iframebutton1.style.flex = '3';
-	iframebutton1.onclick = function() {
-		baseConverterIframe();
-	}
-	// source
-	var asbut = flex1.appendChild(document.createElement('a'));
-	var sbut = asbut.appendChild(document.createElement('button'));
-	asbut.href = 'https://gitlab.com/weekOldRoadkill/base-converter';
-	asbut.target = '_blank';
-	asbut.style.flex = '1';
-	sbut.textContent = 'Source';
-	sbut.style.minWidth = '0';
-	// direct site
-	var abut1 = flex1.appendChild(document.createElement('a'));
-	var but1 = abut1.appendChild(document.createElement('button'));
-	abut1.href = WURL + '/base-converter/';
-	abut1.target = '_blank';
-	abut1.style.flex = '1';
-	but1.textContent = 'Site';
-	but1.style.minWidth = '0';
+	// base converter
+	createFlexRow(windowbody, 'Base Converter', baseConverterIframe, 'https://gitlab.com/weekOldRoadkill/base-converter', WURL + '/base-converter/');
 
-	windowbody.appendChild(document.createElement('br'));
+	// screaming insects
+	createFlexRow(windowbody, 'Screaming Insects', screaminginsectsIframe, 'https://gitlab.com/weekOldRoadkill/screaming-insects', WURL + '/screaming-insects/');
 
-	// Row 2
-	var flex2 = windowbody.appendChild(document.createElement('div'));
-	flex2.style.display = 'flex';
-	// iframe
-	var iframebutton2 = flex2.appendChild(document.createElement('button'));
-	iframebutton2.textContent = 'Screaming Insects';
-	iframebutton2.style.flex = '3';
-	iframebutton2.onclick = function() {
-		screaminginsectsIframe();
-	}
-	// source
-	var asbut2 = flex2.appendChild(document.createElement('a'));
-	var sbut2 = asbut2.appendChild(document.createElement('button'));
-	asbut2.href = 'https://gitlab.com/weekOldRoadkill/screaming-insects';
-	asbut2.target = '_blank';
-	asbut2.style.flex = '1';
-	sbut2.textContent = 'Source';
-	sbut2.style.minWidth = '0';
-	// direct site
-	var abut2 = flex2.appendChild(document.createElement('a'));
-	var but2 = abut2.appendChild(document.createElement('button'));
-	abut2.href = WURL + '/screaming-insects/';
-	abut2.target = '_blank';
-	abut2.style.flex = '1';
-	but2.textContent = 'Site';
-	but2.style.minWidth = '0';
+	// traveling salesman
+	createFlexRow(windowbody, 'Traveling Salesman', travelingsalesmanIframe, 'https://gitlab.com/weekOldRoadkill/traveling-salesman', WURL + '/traveling-salesman/');
 
-	windowbody.appendChild(document.createElement('br'));
+	// inverse kinematics
+	createFlexRow(windowbody, 'Inverse Kinematics', inverseKinematicsIframe, 'https://gitlab.com/weekOldRoadkill/inverse-kinematics', WURL + '/inverse-kinematics/');
 
-	// Row 3
-	var flex3 = windowbody.appendChild(document.createElement('div'));
-	flex3.style.display = 'flex';
-	// iframe
-	var iframebutton3 = flex3.appendChild(document.createElement('button'));
-	iframebutton3.textContent = 'Traveling Salesman';
-	iframebutton3.style.flex = '3';
-	iframebutton3.style.padding = '0';
-	iframebutton3.onclick = function() {
-		travelingsalesmanIframe();
-	}
-	// source
-	var asbut3 = flex3.appendChild(document.createElement('a'));
-	var sbut3 = asbut3.appendChild(document.createElement('button'));
-	asbut3.href = 'https://gitlab.com/weekOldRoadkill/traveling-salesman';
-	asbut3.target = '_blank';
-	asbut3.style.flex = '1';
-	sbut3.textContent = 'Source';
-	sbut3.style.minWidth = '0';
-	// direct site
-	var abut3 = flex3.appendChild(document.createElement('a'));
-	var but3 = abut3.appendChild(document.createElement('button'));
-	abut3.href = WURL + '/traveling-salesman/';
-	abut3.target = '_blank';
-	abut3.style.flex = '1';
-	but3.textContent = 'Site';
-	but3.style.minWidth = '0';
+	// sorting
+	createFlexRow(windowbody, 'Sorting', sortingIframe, 'https://gitlab.com/weekOldRoadkill/sorting', WURL + '/sorting/');
 
-	windowbody.appendChild(document.createElement('br'));
+	// boids
+	createFlexRow(windowbody, 'Boids', boidsIframe, 'https://gitlab.com/weekOldRoadkill/boids', WURL + '/boids/');
 
-	// Row 4
-	var flex4 = windowbody.appendChild(document.createElement('div'));
-	flex4.style.display = 'flex';
-	// iframe
-	var iframebutton4 = flex4.appendChild(document.createElement('button'));
-	iframebutton4.textContent = 'Kinematics';
-	iframebutton4.style.flex = '3';
-	iframebutton4.onclick = function() {
-		inverseKinematicsIframe();
-	}
-	// source
-	var asbut4 = flex4.appendChild(document.createElement('a'));
-	var sbut4 = asbut4.appendChild(document.createElement('button'));
-	asbut4.href = 'https://gitlab.com/weekOldRoadkill/inverse-kinematics';
-	asbut4.target = '_blank';
-	asbut4.style.flex = '1';
-	sbut4.textContent = 'Source';
-	sbut4.style.minWidth = '0';
-	// direct site
-	var abut4 = flex4.appendChild(document.createElement('a'));
-	var but4 = abut4.appendChild(document.createElement('button'));
-	abut4.href = WURL + '/inverse-kinematics/';
-	abut4.target = '_blank';
-	abut4.style.flex = '1';
-	but4.textContent = 'Site';
-	but4.style.minWidth = '0';
+	// verlet
+	createFlexRow(windowbody, 'Verlet', verletIframe, 'https://gitlab.com/weekOldRoadkill/verlet', WURL + '/verlet/');
 
-	windowbody.appendChild(document.createElement('br'));
-
-	// Row 5
-	var flex5 = windowbody.appendChild(document.createElement('div'));
-	flex5.style.display = 'flex';
-	// iframe
-	var iframebutton5 = flex5.appendChild(document.createElement('button'));
-	iframebutton5.textContent = 'Sorting';
-	iframebutton5.style.flex = '3';
-	iframebutton5.onclick = function() {
-		sortingIframe();
-	}
-	// source
-	var asbut5 = flex5.appendChild(document.createElement('a'));
-	var sbut5 = asbut5.appendChild(document.createElement('button'));
-	asbut5.href = 'https://gitlab.com/weekOldRoadkill/sorting';
-	asbut5.target = '_blank';
-	asbut5.style.flex = '1';
-	sbut5.textContent = 'Source';
-	sbut5.style.minWidth = '0';
-	// direct site
-	var abut5 = flex5.appendChild(document.createElement('a'));
-	var but5 = abut5.appendChild(document.createElement('button'));
-	abut5.href = WURL + '/sorting/';
-	abut5.target = '_blank';
-	abut5.style.flex = '1';
-	but5.textContent = 'Site';
-	but5.style.minWidth = '0';
-
-	windowbody.appendChild(document.createElement('br'));
-
-
-	var abut5 = windowbody.appendChild(document.createElement('a'));
-	var but5 = abut5.appendChild(document.createElement('button'));
-	abut5.href = 'https://gitlab.com/weekOldRoadkill';
-	abut5.target = '_blank';
-	but5.textContent = 'GitLab';
-
+	// gitlab
+	sourceLink = windowbody.appendChild(document.createElement('a'));
+	sourceButton = sourceLink.appendChild(document.createElement('button'));
+	sourceLink.href = 'https://gitlab.com/weekOldRoadkill';
+	sourceLink.target = '_blank';
+	sourceButton.textContent = 'GitLab';
 
 	var custom = createWindow({ body: windowbody, title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill' })
 
@@ -285,6 +192,14 @@ function sortingIframe() {
 	addWindow(simpleIframe(WURL + '/sorting/', opts = { title: 'Sorting', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
 }
 
+function boidsIframe() {
+	addWindow(simpleIframe(WURL + '/boids/', opts = { title: 'Boids', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+}
+
+function verletIframe() {
+	addWindow(simpleIframe(WURL + '/verlet/', opts = { title: 'Verlet', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+}
+
 function zigzag1001(halfpage = true) {
 	var windowbody = document.createElement('div');
 	windowbody.className = 'window-body profile';
@@ -292,50 +207,22 @@ function zigzag1001(halfpage = true) {
 	var wincontainer = windowbody.appendChild(document.createElement('div'));
 	wincontainer.className = 'profileImgContainer';
 	var img = wincontainer.appendChild(document.createElement('img'));
-	// img.src = 'https://avatars.githubusercontent.com/u/72932714?v=4';
 	img.src = './img/pfp.gif';
 
 	windowbody.appendChild(document.createElement('br'));
 
-	var flex1 = windowbody.appendChild(document.createElement('div'));
-	flex1.style.display = 'flex';
-	var iframebutton1 = flex1.appendChild(document.createElement('button'));
-	var abut1 = flex1.appendChild(document.createElement('a'));
-	var but1 = abut1.appendChild(document.createElement('button'));
-	abut1.href = 'https://github.com/zigzag1001/pixelWind/tree/wasm';
-	abut1.target = '_blank';
-	abut1.style.flex = '1';
-	but1.textContent = 'Source';
-	iframebutton1.textContent = 'Pixel Wind';
-	iframebutton1.style.flex = '3';
-	iframebutton1.onclick = function() {
-		pixelWindIframe();
-	}
+	// pixelWind
+	createFlexRow(windowbody, 'Pixel Wind', pixelWindIframe, 'https://github.com/zigzag1001/pixelWind/tree/wasm', ZURL + '/pixelWind/');
 
-	windowbody.appendChild(document.createElement('br'));
+	// web98
+	createFlexRow(windowbody, 'web98', web98Iframe, 'https://github.com/zigzag1001/web98', ZURL + '/web98/');
 
-	var flex2 = windowbody.appendChild(document.createElement('div'));
-	flex2.style.display = 'flex';
-	var iframebutton2 = flex2.appendChild(document.createElement('button'));
-	var abut2 = flex2.appendChild(document.createElement('a'));
-	var but2 = abut2.appendChild(document.createElement('button'));
-	abut2.href = 'https://github.com/zigzag1001/web98';
-	abut2.target = '_blank';
-	abut2.style.flex = '1';
-	but2.textContent = 'Source';
-	iframebutton2.textContent = 'This Website';
-	iframebutton2.style.flex = '3';
-	iframebutton2.onclick = function() {
-		web98Iframe();
-	}
-
-	windowbody.appendChild(document.createElement('br'));
-
-	var abut1 = windowbody.appendChild(document.createElement('a'));
-	var but1 = abut1.appendChild(document.createElement('button'));
-	abut1.href = 'https://github.com/zigzag1001';
-	abut1.target = '_blank';
-	but1.textContent = 'GitHub';
+	// github
+	sourceLink = windowbody.appendChild(document.createElement('a'));
+	sourceButton = sourceLink.appendChild(document.createElement('button'));
+	sourceLink.href = 'https://github.com/zigzag1001';
+	sourceLink.target = '_blank';
+	sourceButton.textContent = 'GitHub';
 
 	var custom = createWindow({ body: windowbody, title: '👑\xa0\xa0\xa0\xa0zigzag1001' })
 
