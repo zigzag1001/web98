@@ -308,8 +308,6 @@ window.onload = function() {
 				clearInterval(interval);
 			}
 		}, 86);
-	} else if (query.has('rw')) {
-		randomWinodws();
 	} else if (!query.has('z') && !query.has('w') && !query.has('no')) {
 		const interval = setInterval(function() {
 			if (i % 2 == 0) {
@@ -322,6 +320,12 @@ window.onload = function() {
 				clearInterval(interval);
 			}
 		}, 43);
+	}
+
+	if (query.has('rw')) {
+		setTimeout(function() {
+			randomWinodws();
+		}, 1000);
 	}
 
 	if (query.has('app')) {
