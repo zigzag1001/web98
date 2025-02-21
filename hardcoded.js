@@ -245,8 +245,8 @@ function web98Iframe() {
 	addWindow(simpleIframe('/web98/index.html', opts = { title: 'web98', max: true, canResize: false, height: 612, width: 1044 }), 0, 0);
 }
 
-function pixelSortIframe() {
-	addWindow(simpleIframe('/pixel-sort-rs/index.html', opts = { title: 'Pixel Sort', max: true, canResize: false, height: 719, width: 1249 }), 0, 0);
+function pixelSortIframe(max = false) {
+	addWindow(simpleIframe('/pixel-sort-rs/index.html', opts = { title: 'Pixel Sort', max: max, canResize: false, height: 719, width: 1249 }), 0, 0);
 }
 
 function shuffleArray(array) {
@@ -338,7 +338,10 @@ window.onload = function() {
 	if (query.has('app')) {
 		var app = query.get('app');
 		if (app == 'pixelwind') {
-			pixelWindIframe(false);
+			pixelWindIframe(max = false);
+		}
+		if (app == 'pixelsort') {
+			pixelSortIframe(max = true);
 		}
 	}
 	var clock = document.querySelector('.clock');
