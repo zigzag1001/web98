@@ -19,6 +19,7 @@ function createWindow(opts = {}) {
 	var titlebar = window_.appendChild(document.createElement('div'));
 	titlebar.className = 'title-bar';
 	titlebar.addEventListener('dblclick', () => {
+		umami.track('maximizeWindow');
 		maximizeWindow(window_);
 	});
 
@@ -39,17 +40,21 @@ function createWindow(opts = {}) {
 	maxbutton.ariaLabel = 'Maximize';
 	closebutton.ariaLabel = 'Close';
 	minbutton.onclick = function() {
+		umami.track('minimizeWindow');
 		minimizeWindow(window_);
 	}
 	maxbutton.onclick = function() {
+		umami.track('maximizeWindow');
 		maximizeWindow(window_);
 	}
 	if (opts.closeDelay != undefined) {
 		closebutton.onclick = function() {
+			umami.track('closeWindow');
 			removeWindow(window_, opts.closeDelay);
 		}
 	} else {
 		closebutton.onclick = function() {
+			umami.track('closeWindow');
 			removeWindow(window_);
 		}
 	}
@@ -207,6 +212,7 @@ function taskbar(win, action) {
 		taskbarbutton.className = 'taskbar-button';
 		taskbarbutton.textContent = winname;
 		taskbarbutton.onclick = function() {
+			umami.track('taskbarButton');
 			if ((parseInt(win.style.zIndex) + 1) < maxz) {
 				win.style.zIndex = maxz++;
 			} else {
@@ -405,6 +411,7 @@ function desktopSelectSquare() {
 		square.style.left = x + 'px';
 		square.style.top = y + 'px';
 		desktop.appendChild(square);
+		umami.track('desktopSelectSquare');
 		desktop.addEventListener('mousemove', (e) => {
 			let width = e.clientX - x;
 			let height = e.clientY - y;
@@ -517,6 +524,7 @@ function createIcon(iconPth, title, onclick) {
 	icon.className = 'icon';
 	icon.addEventListener('dblclick', function() {
 		icon.style.background = 'rgba(0, 0, 0, 0.3)';
+		umami.track(title);
 		setTimeout(() => {
 			onclick();
 			icon.style.background = null;
