@@ -77,6 +77,7 @@ function customWin() {
 		});
 		div.classList.add('customwin');
 		addWindow(div);
+		umami.track('customwin');
 	}
 
 	var custom = createWindow({ body: windowbody, title: 'Create Custom Window' })
@@ -95,7 +96,11 @@ function createFlexRow(parent, buttonText, iframeCallback, sourceUrl, siteUrl) {
 	iframeButton.textContent = buttonText;
 	iframeButton.style.flex = '3';
 	iframeButton.style.padding = '0px'
-	iframeButton.onclick = iframeCallback;
+	iframeButton.onclick = () => {
+		umami.track(buttonText);
+		iframeCallback();
+	};
+	// iframeButton.onclick = iframeCallback;
 
 	// Source link
 	var sourceLink = flexRow.appendChild(document.createElement('a'));

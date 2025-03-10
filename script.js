@@ -272,6 +272,7 @@ function maximizeWindow(win) {
 
 // fill the screen with random windows
 function fillRandWin() {
+	umami.track('fillRandWin');
 	if (removing) return;
 	const interval = setInterval(() => {
 		randwin();
@@ -382,6 +383,7 @@ function toggleStartmenu() {
 			startmenu.style.zIndex = 0;
 		}, 200);
 	} else {
+		umami.track('startmenu');
 		startmenu.classList.add('animate__slideInUp');
 		startmenu.style.display = 'block';
 		startmenu.style.zIndex = maxz++;
