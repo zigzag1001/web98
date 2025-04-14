@@ -49,12 +49,10 @@ function createWindow(opts = {}) {
 	}
 	if (opts.closeDelay != undefined) {
 		closebutton.onclick = function() {
-			umami.track('closeWindow');
 			removeWindow(window_, opts.closeDelay);
 		}
 	} else {
 		closebutton.onclick = function() {
-			umami.track('closeWindow');
 			removeWindow(window_);
 		}
 	}
