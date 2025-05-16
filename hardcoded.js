@@ -160,6 +160,9 @@ function weekoldroadkill(halfpage = true) {
 	// verlet
 	createFlexRow(windowbody, 'Verlet', verletIframe, 'https://gitlab.com/weekOldRoadkill/verlet', WURL + '/verlet/');
 
+	// perlin
+	createFlexRow(windowbody, 'Perlin', perlinIframe, 'https://gitlab.com/weekOldRoadkill/perlin', WURL + '/perlin/');
+
 	// gitlab
 	sourceLink = windowbody.appendChild(document.createElement('a'));
 	sourceButton = sourceLink.appendChild(document.createElement('button'));
@@ -203,6 +206,10 @@ function boidsIframe() {
 
 function verletIframe() {
 	addWindow(simpleIframe(WURL + '/verlet/', opts = { title: 'Verlet', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+}
+
+function perlinIframe() {
+	addWindow(simpleIframe(WURL + '/perlin/', opts = { title: 'Perlin', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
 }
 
 function zigzag1001(halfpage = true) {
