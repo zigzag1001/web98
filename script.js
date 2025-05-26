@@ -193,6 +193,8 @@ const namemap = {
 	'customwin': '✅CUSTOM WINDOW',
 };
 
+const taskbarButtAnim = 'animate__headShake';
+
 // handles taskbar to window interaction
 function taskbar(win, action) {
 	if (action == 'add') {
@@ -207,10 +209,16 @@ function taskbar(win, action) {
 			var winname = win.querySelector('.title-bar-text').textContent;
 		}
 		var taskbarbutton = document.createElement('button');
-		taskbarbutton.className = 'taskbar-button';
+		taskbarbutton.className = 'taskbar-button animate__animated';
 		taskbarbutton.textContent = winname;
 		taskbarbutton.onclick = function() {
 			umami.track('taskbarButton');
+
+			taskbarbutton.classList.add(taskbarButtAnim);
+			setTimeout(() => {
+				taskbarbutton.classList.remove(taskbarButtAnim)
+			}, 500);
+
 			if ((parseInt(win.style.zIndex) + 1) < maxz) {
 				win.style.zIndex = maxz++;
 			} else {
@@ -220,6 +228,12 @@ function taskbar(win, action) {
 
 		winbarmap.set(win, taskbarbutton);
 		openwins.appendChild(taskbarbutton);
+
+		taskbarbutton.classList.add(taskbarButtAnim);
+		setTimeout(() => {
+			taskbarbutton.classList.remove(taskbarButtAnim)
+		}, 500);
+
 		return;
 	} else if (action == 'remove') {
 		if (winbarmap.has(win)) {
