@@ -283,10 +283,16 @@ addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
 var apps = [createIcon('msg_warning-0.png', 'Random Windows', randomWinodws),
 createIcon('internet_connection_wiz-4.png', 'Custom Window', customWin),
 createIcon('defragment-0.png', 'pixelWind', pixelWindIframe),
+createIcon('defragment-0.png', 'Pixel Sort', pixelSortIframe),
 
 createIcon('accessibility_big_keys.png', 'Base Converter', baseConverterIframe),
 createIcon('msn3-5.png', 'Screaming Insects', screaminginsectsIframe),
 createIcon('gears-0.png', 'Traveling Salesman', travelingsalesmanIframe),
+createIcon('gears-0.png', 'Inverse Kinematics', inverseKinematicsIframe),
+createIcon('gears-0.png', 'Sorting', sortingIframe),
+createIcon('gears-0.png', 'Boids', boidsIframe),
+createIcon('gears-0.png', 'Verlet', verletIframe),
+createIcon('gears-0.png', 'Perlin', perlinIframe),
 ];
 shuffleArray(apps);
 for (var i = 0; i < apps.length; i++) {
