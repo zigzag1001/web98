@@ -127,6 +127,10 @@ function createFlexRow(parent, buttonText, iframeCallback, sourceUrl, siteUrl) {
 const WURL = 'https://weekoldroadkill.com'
 const ZURL = 'https://zigzag.weekoldroadkill.com'
 
+const windowSize = {
+	height: 612,
+	width: 1044
+};
 
 function weekoldroadkill(halfpage = true) {
 	var windowbody = document.createElement('div');
@@ -181,35 +185,35 @@ function weekoldroadkill(halfpage = true) {
 }
 
 function travelingsalesmanIframe() {
-	addWindow(simpleIframe(WURL + '/traveling-salesman/index.html', opts = { title: 'Traveling Salesman', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/traveling-salesman/index.html', opts = { title: 'Traveling Salesman', max: true, canResize: true, height: windowSize.height, width: windowSize.width }), 0, 0);
 }
 
 function baseConverterIframe() {
-	addWindow(simpleIframe(WURL + '/base-converter/index.html', opts = { title: 'Base Converter', width: 271, height: 347, canResize: false }), 0, 0);
+	addWindow(simpleIframe(WURL + '/base-converter/index.html', opts = { title: 'Base Converter', width: 271, height: 347, canResize: true }), 0, 0);
 }
 
 function screaminginsectsIframe() {
-	addWindow(simpleIframe(WURL + '/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function inverseKinematicsIframe() {
-	addWindow(simpleIframe(WURL + '/inverse-kinematics/', opts = { title: 'Inverse Kinematics', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/inverse-kinematics/', opts = { title: 'Inverse Kinematics', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function sortingIframe() {
-	addWindow(simpleIframe(WURL + '/sorting/', opts = { title: 'Sorting', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/sorting/', opts = { title: 'Sorting', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function boidsIframe() {
-	addWindow(simpleIframe(WURL + '/boids/', opts = { title: 'Boids', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/boids/', opts = { title: 'Boids', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function verletIframe() {
-	addWindow(simpleIframe(WURL + '/verlet/', opts = { title: 'Verlet', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/verlet/', opts = { title: 'Verlet', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function perlinIframe() {
-	addWindow(simpleIframe(WURL + '/perlin/', opts = { title: 'Perlin', max: true, canResize: false, height: window.innerHeight - 36 }), 0, 0);
+	addWindow(simpleIframe(WURL + '/perlin/', opts = { title: 'Perlin', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function zigzag1001(halfpage = true) {
@@ -250,15 +254,15 @@ function zigzag1001(halfpage = true) {
 }
 
 function pixelWindIframe(max = true) {
-	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: max, canResize: false, height: 719, width: 1249 }), 0, 0);
+	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: max, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function web98Iframe() {
-	addWindow(simpleIframe('/web98/index.html', opts = { title: 'web98', max: false, canResize: false, height: 612, width: 1044 }), 0, 0);
+	addWindow(simpleIframe('/web98/index.html', opts = { title: 'web98', max: false, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function pixelSortIframe(max = true) {
-	addWindow(simpleIframe('/pixel-sort-rs/index.html', opts = { title: 'Pixel Sort', max: max, canResize: false, height: 719, width: 1249 }), 0, 0);
+	addWindow(simpleIframe('/pixel-sort-rs/index.html', opts = { title: 'Pixel Sort', max: max, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function shuffleArray(array) {
@@ -299,8 +303,8 @@ for (var i = 0; i < apps.length; i++) {
 	addIcon(apps[i]);
 }
 
-// addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'))
-// addWindow(simpleImage('https://camo.githubusercontent.com/ed3b0212c8a48e5115aa87c48e4fc5fccf3d602f9dbd95bf460d895a91c47576/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
+addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'))
+addWindow(simpleImage('https://camo.githubusercontent.com/ed3b0212c8a48e5115aa87c48e4fc5fccf3d602f9dbd95bf460d895a91c47576/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
 
 
 window.onload = function() {

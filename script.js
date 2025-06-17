@@ -80,6 +80,9 @@ function createWindow(opts = {}) {
 		window_.style.height = opts.height + 'px';
 	}
 
+	window_.dataset.minWidth = window_.style.width;
+	window_.dataset.minHeight = window_.style.height;
+
 	window_.style.margin = '32px';
 
 	handleDragging(window_);
@@ -344,6 +347,10 @@ function handleDragging(item) {
 			offsetX = e.clientX + marginLeft - item.getBoundingClientRect().left;
 			offsetY = e.clientY + marginTop - item.getBoundingClientRect().top;
 			isDragging = true;
+			// disable iframe pointer events
+			document.querySelectorAll('iframe').forEach((iframe) => {
+				iframe.style.pointerEvents = 'none';
+			});
 		}
 	});
 	document.addEventListener('mousemove', (e) => {
@@ -355,6 +362,10 @@ function handleDragging(item) {
 	});
 	document.addEventListener('mouseup', () => {
 		isDragging = false;
+		// re-enable iframe pointer events
+		document.querySelectorAll('iframe').forEach((iframe) => {
+			iframe.style.pointerEvents = '';
+		});
 		// snap icon to grid
 		if (isIcon && iconUpdate) {
 			const grid = 90;
@@ -466,14 +477,23 @@ function handleResizing(corner) {
 	let offsetX, offsetY, isResizing = false;
 	var minWidth, minHeight;
 	setTimeout(() => {
-		minWidth = item.offsetWidth - 6;
-		minHeight = item.offsetHeight - 6;
+		minWidth = item.dataset.minWidth ? parseInt(item.dataset.minWidth) : null;
+		minHeight = item.dataset.minHeight ? parseInt(item.dataset.minHeight) : null;
+		if (minWidth == null || minHeight == null) {
+			console.warn('Window does not have dataset.width or dataset.height set, resizing may not work as expected.');
+			minWidth = item.offsetWidth - 6;
+			minHeight = item.offsetHeight - 6;
+		}
 	}, 1000);
 	corner.addEventListener('mousedown', (e) => {
 		e.preventDefault();
 		offsetX = e.clientX - item.getBoundingClientRect().right;
 		offsetY = e.clientY - item.getBoundingClientRect().bottom;
 		isResizing = true;
+		// disable iframe pointer events
+		document.querySelectorAll('iframe').forEach((iframe) => {
+			iframe.style.pointerEvents = 'none';
+		});
 	});
 	document.addEventListener('mousemove', (e) => {
 		if (isResizing) {
@@ -491,6 +511,10 @@ function handleResizing(corner) {
 	});
 	document.addEventListener('mouseup', () => {
 		isResizing = false;
+		// re-enable iframe pointer events
+		document.querySelectorAll('iframe').forEach((iframe) => {
+			iframe.style.pointerEvents = '';
+		});
 	});
 }
 
