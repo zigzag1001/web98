@@ -64,11 +64,30 @@ function createWindow(opts = {}) {
 		window_.appendChild(simplebody);
 	}
 
+	// if (opts.canResize != false) {
+	// 	var dragcorner = document.createElement('div');
+	// 	dragcorner.className = 'drag-corner';
+	// 	window_.children[1].appendChild(dragcorner);
+	// 	handleResizing(dragcorner);
+	// }
 	if (opts.canResize != false) {
-		var dragcorner = document.createElement('div');
-		dragcorner.className = 'drag-corner';
-		window_.children[1].appendChild(dragcorner);
-		handleResizing(dragcorner);
+		const sides = [
+			{ cls: 'r-n', cursor: 'n-resize' },
+			{ cls: 'r-e', cursor: 'e-resize' },
+			{ cls: 'r-s', cursor: 's-resize' },
+			{ cls: 'r-w', cursor: 'w-resize' },
+			{ cls: 'r-ne', cursor: 'ne-resize' },
+			{ cls: 'r-nw', cursor: 'nw-resize' },
+			{ cls: 'r-se', cursor: 'se-resize' },
+			{ cls: 'r-sw', cursor: 'sw-resize' },
+		];
+		sides.forEach(({ cls, cursor }) => {
+			const resizer = document.createElement('div');
+			resizer.className = cls + ' resizer';
+			resizer.style.cursor = cursor;
+			window_.appendChild(resizer);
+			handleEdgeResizing(resizer, cls);
+		});
 	}
 
 	if (opts.width) {
@@ -471,50 +490,95 @@ function desktopSelectSquare() {
 }
 desktopSelectSquare();
 
-// bottom right resize corner
-function handleResizing(corner) {
-	var item = corner.closest('.window');
-	let offsetX, offsetY, isResizing = false;
+function handleEdgeResizing(resizer, dir) {
+	const item = resizer.closest('.window');
+	let startX, startY, startWidth, startHeight, startLeft, startTop, maxLeft, maxTop;
+
 	var minWidth, minHeight;
 	setTimeout(() => {
 		minWidth = item.dataset.minWidth ? parseInt(item.dataset.minWidth) : null;
 		minHeight = item.dataset.minHeight ? parseInt(item.dataset.minHeight) : null;
 		if (minWidth == null || minHeight == null) {
-			console.warn('Window does not have dataset.width or dataset.height set, resizing may not work as expected.');
 			minWidth = item.offsetWidth - 6;
 			minHeight = item.offsetHeight - 6;
 		}
 	}, 1000);
-	corner.addEventListener('mousedown', (e) => {
+
+	resizer.addEventListener('mousedown', e => {
 		e.preventDefault();
-		offsetX = e.clientX - item.getBoundingClientRect().right;
-		offsetY = e.clientY - item.getBoundingClientRect().bottom;
-		isResizing = true;
+
 		// disable iframe pointer events
 		document.querySelectorAll('iframe').forEach((iframe) => {
 			iframe.style.pointerEvents = 'none';
 		});
-	});
-	document.addEventListener('mousemove', (e) => {
-		if (isResizing) {
-			var width = e.clientX - item.getBoundingClientRect().left + offsetX;
-			var height = e.clientY - item.getBoundingClientRect().top + offsetY;
-			if (width < minWidth) {
-				width = minWidth;
+
+		startX = e.clientX;
+		startY = e.clientY;
+		startWidth = parseInt(document.defaultView.getComputedStyle(item).width, 10);
+		startHeight = parseInt(document.defaultView.getComputedStyle(item).height, 10);
+		startLeft = parseInt(document.defaultView.getComputedStyle(item).left, 10);
+		startTop = parseInt(document.defaultView.getComputedStyle(item).top, 10);
+
+		marginLeft = parseInt(item.style.marginLeft.substring(0, item.style.marginLeft.length - 2));
+		marginTop = parseInt(item.style.marginTop.substring(0, item.style.marginTop.length - 2));
+
+		maxLeft = item.getBoundingClientRect().right - minWidth - marginLeft - 6;
+		maxTop = item.getBoundingClientRect().bottom - minHeight - marginTop - 6;
+
+		document.body.style.userSelect = "none";
+
+		function doDrag(ev) {
+			let dx = ev.clientX - startX;
+			let dy = ev.clientY - startY;
+			let newWidth, newHeight, newLeft, newTop;
+			if (dir.includes('e')) {
+				newWidth = startWidth + dx;
+				if (minWidth && newWidth < minWidth) {
+					newWidth = minWidth;
+				}
+				item.style.width = newWidth + 'px';
 			}
-			if (height < minHeight) {
-				height = minHeight;
+			if (dir.includes('s')) {
+				newHeight = startHeight + dy;
+				if (minHeight && newHeight < minHeight) {
+					newHeight = minHeight;
+				}
+				item.style.height = newHeight + 'px';
 			}
-			item.style.width = width + 'px';
-			item.style.height = height + 'px';
+			if (dir.includes('w')) {
+				newWidth = startWidth - dx;
+				newLeft = startLeft + dx;
+				if (minWidth && newWidth < minWidth) {
+					newWidth = minWidth;
+					newLeft = maxLeft
+				}
+				item.style.width = newWidth + 'px';
+				item.style.left = newLeft + 'px';
+			}
+			if (dir.includes('n')) {
+				newHeight = startHeight - dy;
+				newTop = startTop + dy;
+				if (minHeight && newHeight < minHeight) {
+					newHeight = minHeight;
+					newTop = maxTop;
+				}
+				item.style.height = newHeight + 'px';
+				item.style.top = newTop + 'px';
+			}
 		}
-	});
-	document.addEventListener('mouseup', () => {
-		isResizing = false;
-		// re-enable iframe pointer events
-		document.querySelectorAll('iframe').forEach((iframe) => {
-			iframe.style.pointerEvents = '';
-		});
+		function stopDrag() {
+
+			// re-enable iframe pointer events
+			document.querySelectorAll('iframe').forEach((iframe) => {
+				iframe.style.pointerEvents = '';
+			});
+
+			document.removeEventListener('mousemove', doDrag);
+			document.removeEventListener('mouseup', stopDrag);
+			document.body.style.userSelect = "";
+		}
+		document.addEventListener('mousemove', doDrag);
+		document.addEventListener('mouseup', stopDrag);
 	});
 }
 
