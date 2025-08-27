@@ -454,6 +454,12 @@ function desktopSelectSquare() {
 		square.style.top = y + 'px';
 		desktop.appendChild(square);
 		umami.track('desktopSelectSquare');
+
+        // disable pointer events on windows
+        document.querySelectorAll('.window').forEach((win) => {
+            win.style.pointerEvents = 'none';
+        });
+
 		desktop.addEventListener('mousemove', (e) => {
 			let width = e.clientX - x;
 			let height = e.clientY - y;
@@ -483,6 +489,12 @@ function desktopSelectSquare() {
 		});
 		desktop.addEventListener('mouseup', () => {
 			square.remove();
+
+            // re-enable pointer events on windows
+            document.querySelectorAll('.window').forEach((win) => {
+                win.style.pointerEvents = '';
+            });
+
 			desktop.removeEventListener('mousemove', () => { });
 			desktop.removeEventListener('mouseup', () => { });
 		});
