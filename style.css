@@ -317,6 +317,7 @@ iframe {
 	width: 70%;
 	user-select: none;
 	margin-top: 8px;
+	image-rendering: pixelated;
 }
 
 .icon p {
