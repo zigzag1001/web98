@@ -667,7 +667,12 @@ function addIcon(icon) {
 	icon.style.top = icony + 'px';
 	document.querySelector('.desktop').appendChild(icon);
 	var iconheight = icon.offsetHeight;
-	if (icony < 700) {
+    // TODO: fix icons fitting on screen
+    var taskbarHeight = document.querySelector('.taskbar').offsetHeight;
+    var screenHeight = window.innerHeight - taskbarHeight;
+    var maxHeight = screenHeight - (iconheight + 16)*2;
+    icon.dataset.test = icony + ' ' + maxHeight;
+	if (icony < maxHeight) {
 		icony += iconheight + 16;
 	} else {
 		icony = 0;
