@@ -167,6 +167,9 @@ function weekoldroadkill(halfpage = true) {
 	// perlin
 	createFlexRow(windowbody, 'Perlin', perlinIframe, 'https://gitlab.com/weekOldRoadkill/perlin', WURL + '/perlin/');
 
+    // drones
+    createFlexRow(windowbody, 'Drones', dronesIframe, 'https://gitlab.com/weekOldRoadkill/drones', WURL + '/drones/');
+
 	// gitlab
 	sourceLink = windowbody.appendChild(document.createElement('a'));
 	sourceButton = sourceLink.appendChild(document.createElement('button'));
@@ -214,6 +217,10 @@ function verletIframe() {
 
 function perlinIframe() {
 	addWindow(simpleIframe(WURL + '/perlin/', opts = { title: 'Perlin', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
+}
+
+function dronesIframe() {
+    addWindow(simpleIframe(WURL + '/drones/', opts = { title: 'Drones', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
 function zigzag1001(halfpage = true) {
@@ -366,6 +373,4 @@ window.onload = function() {
 			pixelSortIframe(max = true);
 		}
 	}
-	var clock = document.querySelector('.clock');
-	clock.innerHTML = "📅 " + new Date().toLocaleTimeString();
 }
