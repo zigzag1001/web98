@@ -719,8 +719,30 @@ function simpleImage(src, opts = {}) {
 	return w;
 }
 
+function doClock(clockdiv) {
+    clockdiv.innerHTML = new Date().toLocaleTimeString();
+    setInterval(() => {
+        clockdiv.innerHTML = new Date().toLocaleTimeString();
+    }, 1000);
+}
 
-window.onload = function() {
-	var clock = document.querySelector('.clock');
-	clock.innerHTML = "📅 " + new Date().toLocaleTimeString();
+doClock(document.querySelector('.clock'));
+
+function dataDrivenWindows() {
+    // param -> b64 -> string -> json
+    const query = new URLSearchParams(window.location.search);
+    const b64str = query.get('d');
+    const jsonstr = atob(b64str);
+    const data = JSON.parse(jsonstr);
+
+    // {
+    // title: 'Default',
+    // width: 400,
+    // height: 300,
+    // max: false,
+    // canResize: true, 
+    // x: 0,
+    // y: 0,
+    // }
+    //
 }
