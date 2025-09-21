@@ -69,6 +69,7 @@
 
 .clock-tray {
     width: 7%;
+    min-width: 128px;
 	user-select: none;
 	cursor: default;
 	outline: inset 2px rgba(0, 0, 0, 0.6);
