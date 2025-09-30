@@ -7,7 +7,7 @@ let maxz = 50;
 let removing = false;
 
 // returns window element
-// opts: title, body, width, height, className, closeDelay, canResize, max
+// opts: title, body, width, height, className, closeDelay, canResize, max, maxheight, maxwidth
 function createWindow(opts = {}) {
 	var window_ = document.createElement('div');
 	if (opts.className) {
@@ -90,6 +90,13 @@ function createWindow(opts = {}) {
 		});
 	}
 
+    // if (opts.width == undefined || opts.maxwidth < opts.width) {
+    //     opts.width = opts.maxwidth;
+    // }
+    // if (opts.height == undefined || opts.maxheight < opts.height) {
+    //     opts.height = opts.maxheight;
+    // }
+
 	if (opts.width) {
 		window_.style.width = opts.width + 'px';
 	} else {
@@ -98,6 +105,13 @@ function createWindow(opts = {}) {
 	if (opts.height) {
 		window_.style.height = opts.height + 'px';
 	}
+
+    if (opts.maxwidth) {
+        window_.style.maxWidth = opts.maxwidth + 'px';
+    }
+    if (opts.maxheight) {
+        window_.style.maxHeight = opts.maxheight + 'px';
+    }
 
 	window_.dataset.minWidth = window_.style.width;
 	window_.dataset.minHeight = window_.style.height;

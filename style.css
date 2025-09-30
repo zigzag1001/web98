@@ -213,6 +213,20 @@
 	border-color: lightgray;
 }
 
+.profileLinkContainer {
+    overflow-y: auto;
+    scrollbar-width: none;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.window-body.profile {
+	height: 93%;
+	display: flex;
+	flex-direction: column;
+}
+
 .profile button {
 	width: 100%;
 	font-weight: bold;

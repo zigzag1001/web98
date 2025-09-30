@@ -87,7 +87,7 @@ function customWin() {
 }
 
 
-function createFlexRow(parent, buttonText, iframeCallback, sourceUrl, siteUrl) {
+function createFlexRow(parent, buttonText, iframeCallback, sourceUrl, siteUrl, bottomMargin = true) {
 	var flexRow = parent.appendChild(document.createElement('div'));
 	flexRow.style.display = 'flex';
 
@@ -120,12 +120,14 @@ function createFlexRow(parent, buttonText, iframeCallback, sourceUrl, siteUrl) {
 	siteButton.textContent = 'Site';
 	siteButton.style.minWidth = '0';
 
-	parent.appendChild(document.createElement('br'));
+	// parent.appendChild(document.createElement('br'));
+    if (bottomMargin) flexRow.style.marginBottom = '8px';
+    return flexRow;
 }
 
 
 const WURL = 'https://weekoldroadkill.com'
-const ZURL = 'https://zigzag.weekoldroadkill.com'
+const ZURL = 'https://weekoldroadkill.com'
 
 const windowSize = {
 	height: 612,
@@ -141,34 +143,44 @@ function weekoldroadkill(halfpage = true) {
 	var img = wincontainer.appendChild(document.createElement('img'));
 	img.src = 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800';
 
-	windowbody.appendChild(document.createElement('br'));
+	// windowbody.appendChild(document.createElement('br'));
+
+    var link_container = windowbody.appendChild(document.createElement('div'));
+    link_container.className = 'profileLinkContainer';
+    // scrollIntoView() ???
 
 	// base converter
-	createFlexRow(windowbody, 'Base Converter', baseConverterIframe, 'https://gitlab.com/weekOldRoadkill/base-converter', WURL + '/base-converter/');
+	createFlexRow(link_container, 'Base Converter', baseConverterIframe, 'https://gitlab.com/weekOldRoadkill/base-converter', WURL + '/base-converter/', false);
 
 	// screaming insects
-	createFlexRow(windowbody, 'Screaming Insects', screaminginsectsIframe, 'https://gitlab.com/weekOldRoadkill/screaming-insects', WURL + '/screaming-insects/');
+	createFlexRow(link_container, 'Screaming Insects', screaminginsectsIframe, 'https://gitlab.com/weekOldRoadkill/screaming-insects', WURL + '/screaming-insects/');
 
 	// traveling salesman
-	createFlexRow(windowbody, 'Traveling Salesman', travelingsalesmanIframe, 'https://gitlab.com/weekOldRoadkill/traveling-salesman', WURL + '/traveling-salesman/');
+	createFlexRow(link_container, 'Traveling Salesman', travelingsalesmanIframe, 'https://gitlab.com/weekOldRoadkill/traveling-salesman', WURL + '/traveling-salesman/');
 
 	// inverse kinematics
-	createFlexRow(windowbody, 'Inverse Kinematics', inverseKinematicsIframe, 'https://gitlab.com/weekOldRoadkill/inverse-kinematics', WURL + '/inverse-kinematics/');
+	createFlexRow(link_container, 'Inverse Kinematics', inverseKinematicsIframe, 'https://gitlab.com/weekOldRoadkill/inverse-kinematics', WURL + '/inverse-kinematics/');
 
 	// sorting
-	createFlexRow(windowbody, 'Sorting', sortingIframe, 'https://gitlab.com/weekOldRoadkill/sorting', WURL + '/sorting/');
+	createFlexRow(link_container, 'Sorting', sortingIframe, 'https://gitlab.com/weekOldRoadkill/sorting', WURL + '/sorting/');
 
 	// boids
-	createFlexRow(windowbody, 'Boids', boidsIframe, 'https://gitlab.com/weekOldRoadkill/boids', WURL + '/boids/');
+	createFlexRow(link_container, 'Boids', boidsIframe, 'https://gitlab.com/weekOldRoadkill/boids', WURL + '/boids/');
 
 	// verlet
-	createFlexRow(windowbody, 'Verlet', verletIframe, 'https://gitlab.com/weekOldRoadkill/verlet', WURL + '/verlet/');
+	createFlexRow(link_container, 'Verlet', verletIframe, 'https://gitlab.com/weekOldRoadkill/verlet', WURL + '/verlet/');
 
 	// perlin
-	createFlexRow(windowbody, 'Perlin', perlinIframe, 'https://gitlab.com/weekOldRoadkill/perlin', WURL + '/perlin/');
+	createFlexRow(link_container, 'Perlin', perlinIframe, 'https://gitlab.com/weekOldRoadkill/perlin', WURL + '/perlin/');
 
     // drones
-    createFlexRow(windowbody, 'Drones', dronesIframe, 'https://gitlab.com/weekOldRoadkill/drones', WURL + '/drones/');
+    var last = createFlexRow(link_container, 'Drones', dronesIframe, 'https://gitlab.com/weekOldRoadkill/drones', WURL + '/drones/');
+
+    // scroll to last element
+    setTimeout(function() {
+        last.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        last.classList.add('animate__animated', 'animate__headShake');
+    }, 2000);
 
 	// gitlab
 	sourceLink = windowbody.appendChild(document.createElement('a'));
@@ -176,8 +188,9 @@ function weekoldroadkill(halfpage = true) {
 	sourceLink.href = 'https://gitlab.com/weekOldRoadkill';
 	sourceLink.target = '_blank';
 	sourceButton.textContent = 'GitLab';
+    sourceLink.style.marginTop = '8px';
 
-	var custom = createWindow({ body: windowbody, title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill' })
+	var custom = createWindow({ body: windowbody, title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill', height: 500 })
 
 	if (halfpage) {
 		var mx = window.innerWidth / 2;
@@ -232,16 +245,19 @@ function zigzag1001(halfpage = true) {
 	var img = wincontainer.appendChild(document.createElement('img'));
 	img.src = './img/pfp.gif';
 
-	windowbody.appendChild(document.createElement('br'));
+	// windowbody.appendChild(document.createElement('br'));
+
+    var link_container = windowbody.appendChild(document.createElement('div'));
+    link_container.className = 'profileLinkContainer';
 
 	// pixelWind
-	createFlexRow(windowbody, 'Pixel Wind', pixelWindIframe, 'https://github.com/zigzag1001/pixelWind/tree/wasm', ZURL + '/pixelWind/');
+	createFlexRow(link_container, 'Pixel Wind', pixelWindIframe, 'https://github.com/zigzag1001/pixelWind/tree/wasm', ZURL + '/pixelWind/');
 
 	// web98
-	createFlexRow(windowbody, 'web98', web98Iframe, 'https://github.com/zigzag1001/web98', ZURL + '/web98/');
+	createFlexRow(link_container, 'web98', web98Iframe, 'https://github.com/zigzag1001/web98', ZURL + '/web98/');
 
 	// pixel-sort-rs
-	createFlexRow(windowbody, 'Pixel Sort', pixelSortIframe, 'https://github.com/zigzag1001/pixel-sort-rs', ZURL + '/pixel-sort-rs/');
+	createFlexRow(link_container, 'Pixel Sort', pixelSortIframe, 'https://github.com/zigzag1001/pixel-sort-rs', ZURL + '/pixel-sort-rs/');
 
 	// github
 	sourceLink = windowbody.appendChild(document.createElement('a'));
