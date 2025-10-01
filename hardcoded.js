@@ -134,70 +134,137 @@ const windowSize = {
 	width: 1044
 };
 
-function weekoldroadkill(halfpage = true) {
-	var windowbody = document.createElement('div');
-	windowbody.className = 'window-body profile';
+function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
+    var windowbody = document.createElement('div');
+    windowbody.className = 'window-body profile';
 
-	var wincontainer = windowbody.appendChild(document.createElement('div'));
-	wincontainer.className = 'profileImgContainer';
-	var img = wincontainer.appendChild(document.createElement('img'));
-	img.src = 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800';
-
-	// windowbody.appendChild(document.createElement('br'));
+    var wincontainer = windowbody.appendChild(document.createElement('div'));
+    wincontainer.className = 'profileImgContainer';
+    if (profileJson.img) {
+        var img = wincontainer.appendChild(document.createElement('img'));
+        img.src = profileJson.img;
+    }
 
     var link_container = windowbody.appendChild(document.createElement('div'));
     link_container.className = 'profileLinkContainer';
-    // scrollIntoView() ???
 
-	// base converter
-	createFlexRow(link_container, 'Base Converter', baseConverterIframe, 'https://gitlab.com/weekOldRoadkill/base-converter', WURL + '/base-converter/', false);
+    let rows = profileJson.rows || [];
+    let height = rows.length > 5 ? 500 : undefined;
+    let flexRows = [];
 
-	// screaming insects
-	createFlexRow(link_container, 'Screaming Insects', screaminginsectsIframe, 'https://gitlab.com/weekOldRoadkill/screaming-insects', WURL + '/screaming-insects/');
+    for (let i = 0; i < rows.length; i++) {
+        // For column-reverse, first element is visually bottom, so bottomMargin only for last
+        // let bottomMargin = i === rows.length - 1 ? true : false;
+        let bottomMargin = i === 0 ? false : true;
+        let flexRow = createFlexRow(
+            link_container,
+            rows[i].buttonText,
+            rows[i].iframeCallback,
+            rows[i].sourceUrl,
+            rows[i].siteUrl,
+            bottomMargin
+        );
+        flexRows.push(flexRow);
+    }
 
-	// traveling salesman
-	createFlexRow(link_container, 'Traveling Salesman', travelingsalesmanIframe, 'https://gitlab.com/weekOldRoadkill/traveling-salesman', WURL + '/traveling-salesman/');
+    // Animate and scroll last row (visually top due to column-reverse)
+    if (flexRows.length > 0) {
+        setTimeout(function() {
+            let last = flexRows[flexRows.length - 1];
+            last.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            setTimeout(function() {
+                last.classList.add('animate__animated', 'animate__headShake');
+            }, 300);
+        }, 1500);
+    }
 
-	// inverse kinematics
-	createFlexRow(link_container, 'Inverse Kinematics', inverseKinematicsIframe, 'https://gitlab.com/weekOldRoadkill/inverse-kinematics', WURL + '/inverse-kinematics/');
+    if (profileJson.sourceLink) {
+        let sourceLink = windowbody.appendChild(document.createElement('a'));
+        let sourceButton = sourceLink.appendChild(document.createElement('button'));
+        sourceLink.href = profileJson.sourceLink;
+        sourceLink.target = '_blank';
+        sourceButton.textContent = profileJson.sourceText || 'Source';
+        sourceLink.style.marginTop = '8px';
+    }
 
-	// sorting
-	createFlexRow(link_container, 'Sorting', sortingIframe, 'https://gitlab.com/weekOldRoadkill/sorting', WURL + '/sorting/');
+    var custom = createWindow({
+        body: windowbody,
+        title: profileJson.title || '',
+        height: height
+    });
 
-	// boids
-	createFlexRow(link_container, 'Boids', boidsIframe, 'https://gitlab.com/weekOldRoadkill/boids', WURL + '/boids/');
+    if (halfpage) {
+        var mx = window.innerWidth / 2;
+        var x = (side === "right") ? mx : 0;
+        addWindow(custom, x, 0, mx);
+    } else {
+        addWindow(custom);
+    }
+}
 
-	// verlet
-	createFlexRow(link_container, 'Verlet', verletIframe, 'https://gitlab.com/weekOldRoadkill/verlet', WURL + '/verlet/');
-
-	// perlin
-	createFlexRow(link_container, 'Perlin', perlinIframe, 'https://gitlab.com/weekOldRoadkill/perlin', WURL + '/perlin/');
-
-    // drones
-    var last = createFlexRow(link_container, 'Drones', dronesIframe, 'https://gitlab.com/weekOldRoadkill/drones', WURL + '/drones/');
-
-    // scroll to last element
-    setTimeout(function() {
-        last.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        last.classList.add('animate__animated', 'animate__headShake');
-    }, 2000);
-
-	// gitlab
-	sourceLink = windowbody.appendChild(document.createElement('a'));
-	sourceButton = sourceLink.appendChild(document.createElement('button'));
-	sourceLink.href = 'https://gitlab.com/weekOldRoadkill';
-	sourceLink.target = '_blank';
-	sourceButton.textContent = 'GitLab';
-    sourceLink.style.marginTop = '8px';
-
-	var custom = createWindow({ body: windowbody, title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill', height: 500 })
-
-	if (halfpage) {
-		var mx = window.innerWidth / 2;
-		addWindow(custom, 0, 0, mx = mx);
-	} else {
-		addWindow(custom);
-	}
+function weekoldroadkill(halfpage = true, side = 'left') {
+    createProfileFromJson({
+        title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill',
+        img: 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800',
+        rows: [
+            {
+                buttonText: 'Base Converter',
+                iframeCallback: baseConverterIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/base-converter',
+                siteUrl: WURL + '/base-converter/'
+            },
+            {
+                buttonText: 'Screaming Insects',
+                iframeCallback: screaminginsectsIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/screaming-insects',
+                siteUrl: WURL + '/screaming-insects/'
+            },
+            {
+                buttonText: 'Traveling Salesman',
+                iframeCallback: travelingsalesmanIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/traveling-salesman',
+                siteUrl: WURL + '/traveling-salesman/'
+            },
+            {
+                buttonText: 'Inverse Kinematics',
+                iframeCallback: inverseKinematicsIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/inverse-kinematics',
+                siteUrl: WURL + '/inverse-kinematics/'
+            },
+            {
+                buttonText: 'Sorting',
+                iframeCallback: sortingIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/sorting',
+                siteUrl: WURL + '/sorting/'
+            },
+            {
+                buttonText: 'Boids',
+                iframeCallback: boidsIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/boids',
+                siteUrl: WURL + '/boids/'
+            },
+            {
+                buttonText: 'Verlet',
+                iframeCallback: verletIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/verlet',
+                siteUrl: WURL + '/verlet/'
+            },
+            {
+                buttonText: 'Perlin',
+                iframeCallback: perlinIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/perlin',
+                siteUrl: WURL + '/perlin/'
+            },
+            {
+                buttonText: 'Drones',
+                iframeCallback: dronesIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/drones',
+                siteUrl: WURL + '/drones/'
+            }
+        ],
+        sourceLink: 'https://gitlab.com/weekOldRoadkill',
+        sourceText: 'GitLab'
+    }, halfpage, side);
 }
 
 function travelingsalesmanIframe() {
@@ -236,44 +303,33 @@ function dronesIframe() {
     addWindow(simpleIframe(WURL + '/drones/', opts = { title: 'Drones', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
 
-function zigzag1001(halfpage = true) {
-	var windowbody = document.createElement('div');
-	windowbody.className = 'window-body profile';
-
-	var wincontainer = windowbody.appendChild(document.createElement('div'));
-	wincontainer.className = 'profileImgContainer';
-	var img = wincontainer.appendChild(document.createElement('img'));
-	img.src = './img/pfp.gif';
-
-	// windowbody.appendChild(document.createElement('br'));
-
-    var link_container = windowbody.appendChild(document.createElement('div'));
-    link_container.className = 'profileLinkContainer';
-
-	// pixelWind
-	createFlexRow(link_container, 'Pixel Wind', pixelWindIframe, 'https://github.com/zigzag1001/pixelWind/tree/wasm', ZURL + '/pixelWind/');
-
-	// web98
-	createFlexRow(link_container, 'web98', web98Iframe, 'https://github.com/zigzag1001/web98', ZURL + '/web98/');
-
-	// pixel-sort-rs
-	createFlexRow(link_container, 'Pixel Sort', pixelSortIframe, 'https://github.com/zigzag1001/pixel-sort-rs', ZURL + '/pixel-sort-rs/');
-
-	// github
-	sourceLink = windowbody.appendChild(document.createElement('a'));
-	sourceButton = sourceLink.appendChild(document.createElement('button'));
-	sourceLink.href = 'https://github.com/zigzag1001';
-	sourceLink.target = '_blank';
-	sourceButton.textContent = 'GitHub';
-
-	var custom = createWindow({ body: windowbody, title: '👑\xa0\xa0\xa0\xa0zigzag1001' })
-
-	if (halfpage) {
-		var mx = window.innerWidth / 2;
-		addWindow(custom, window.innerWidth / 2, 0, mx = mx);
-	} else {
-		addWindow(custom);
-	}
+function zigzag1001(halfpage = true, side = 'right') {
+    createProfileFromJson({
+        title: '👑\xa0\xa0\xa0\xa0zigzag1001',
+        img: './img/pfp.gif',
+        rows: [
+            {
+                buttonText: 'Pixel Wind',
+                iframeCallback: pixelWindIframe,
+                sourceUrl: 'https://github.com/zigzag1001/pixelWind/tree/wasm',
+                siteUrl: ZURL + '/pixelWind/'
+            },
+            {
+                buttonText: 'web98',
+                iframeCallback: web98Iframe,
+                sourceUrl: 'https://github.com/zigzag1001/web98',
+                siteUrl: ZURL + '/web98/'
+            },
+            {
+                buttonText: 'Pixel Sort',
+                iframeCallback: pixelSortIframe,
+                sourceUrl: 'https://github.com/zigzag1001/pixel-sort-rs',
+                siteUrl: ZURL + '/pixel-sort-rs/'
+            }
+        ],
+        sourceLink: 'https://github.com/zigzag1001',
+        sourceText: 'GitHub'
+    }, halfpage, side);
 }
 
 function pixelWindIframe(max = true) {
