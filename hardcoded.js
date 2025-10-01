@@ -110,6 +110,9 @@ function createFlexRow(parent, buttonText, iframeCallback, sourceUrl, siteUrl, b
 	sourceLink.style.flex = '1';
 	sourceButton.textContent = 'Source';
 	sourceButton.style.minWidth = '0';
+    sourceButton.onclick = () => {
+        umami.track(buttonText + '-Source');
+    }
 
 	// Direct site link
 	var siteLink = flexRow.appendChild(document.createElement('a'));
@@ -119,6 +122,9 @@ function createFlexRow(parent, buttonText, iframeCallback, sourceUrl, siteUrl, b
 	siteLink.style.flex = '1';
 	siteButton.textContent = 'Site';
 	siteButton.style.minWidth = '0';
+    siteButton.onclick = () => {
+        umami.track(buttonText + '-Site');
+    }
 
 	// parent.appendChild(document.createElement('br'));
     if (bottomMargin) flexRow.style.marginBottom = '8px';
@@ -185,6 +191,9 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
         sourceLink.target = '_blank';
         sourceButton.textContent = profileJson.sourceText || 'Source';
         sourceLink.style.marginTop = '8px';
+        sourceButton.onclick = () => {
+            umami.track((profileJson.title || 'Profile') + '-GitProfile');
+        }
     }
 
     var custom = createWindow({
