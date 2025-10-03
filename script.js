@@ -435,9 +435,9 @@ items.forEach(handleDragging);
 // ---------
 
 
-function toggleStartmenu() {
+function toggleStartmenu(forceClose = false) {
 	var startmenu = document.querySelector('.startmenu');
-	if (startmenu.style.display == 'block') {
+	if (startmenu.style.display == 'block' || forceClose) {
 		startmenu.classList.add('animate__slideOutDown');
 		setTimeout(() => {
 			startmenu.classList.remove('animate__slideOutDown');
@@ -457,6 +457,7 @@ function desktopSelectSquare() {
 	var desktop = document.querySelector('.desktop');
 	var selectedIcons = [];
 	desktop.addEventListener('mousedown', (e) => {
+        toggleStartmenu(true);
 		selectedIcons = [];
 		var icons = document.querySelectorAll('.icon');
 		if (e.target.classList.contains('icon') || e.target.classList.contains('iconimg')) return;
@@ -494,8 +495,10 @@ function desktopSelectSquare() {
 					icon.getBoundingClientRect().top < square.getBoundingClientRect().bottom &&
 					icon.getBoundingClientRect().bottom > square.getBoundingClientRect().top) {
 					icon.style.background = 'rgba(0, 0, 0, 0.1)';
+                    icon.style.outline = '2px dotted rgba(0,0,0,0.3)';
 					selectedIcons.push(icon);
 				} else {
+                    icon.style.outline = null;
 					icon.style.background = null;
 					selectedIcons = selectedIcons.filter((selectedIcon) => selectedIcon != icon);
 				}
@@ -640,6 +643,13 @@ function simpleIframe(src, opts = {}) {
 		canResize: opts.canResize
 	});
 	c.dataset.aniDelay = 1;
+
+    // TODO: testing to get title from iframe
+    iframe.onload = function() {
+        const iframeTitle = iframe.contentDocument.title;
+        console.log('Iframe title:', iframeTitle);
+    };
+
 	return c;
 }
 
@@ -649,11 +659,13 @@ function createIcon(iconPth, title, onclick) {
 	var icon = document.createElement('div');
 	icon.className = 'icon';
 	icon.addEventListener('dblclick', function() {
-		icon.style.background = 'rgba(0, 0, 0, 0.3)';
+		// icon.style.background = 'rgba(0, 0, 0, 0.3)';
+        icon.style.outline = '2px dotted rgba(0,0,0,0.3)';
 		umami.track(title);
 		setTimeout(() => {
 			onclick();
-			icon.style.background = null;
+			// icon.style.background = null;
+            icon.style.outline = null;
 		}, 80);
 	});
 	icon.style.margin = '16px';
@@ -681,7 +693,6 @@ function addIcon(icon) {
 	icon.style.top = icony + 'px';
 	document.querySelector('.desktop').appendChild(icon);
 	var iconheight = icon.offsetHeight;
-    // TODO: fix icons fitting on screen
     var taskbarHeight = document.querySelector('.taskbar').offsetHeight;
     var screenHeight = window.innerHeight - taskbarHeight;
     var maxHeight = screenHeight - (iconheight + 16)*2;

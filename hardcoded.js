@@ -140,6 +140,17 @@ const windowSize = {
 	width: 1044
 };
 
+/**
+ * Create a profile window from a JSON object.
+ * @param {Object} profileJson - The profile data.
+ * @param {string} [profileJson.title] - Title of the window.
+ * @param {string} [profileJson.img] - Profile image URL.
+ * @param {Array} profileJson.rows - Array of row objects for createFlexRow.
+ * Each row: { buttonText, iframeCallback, sourceUrl, siteUrl }
+ * @param {string} [profileJson.sourceLink] - Optional source link URL.
+ * @param {string} [profileJson.sourceText] - Button text for source link.
+ * @param {boolean} [halfpage=true] - Whether to use halfpage layout.
+ */
 function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
     var windowbody = document.createElement('div');
     windowbody.className = 'window-body profile';
@@ -398,7 +409,7 @@ addWindow(simpleImage('https://camo.githubusercontent.com/ed3b0212c8a48e5115aa87
 window.onload = function() {
 	const query = new URLSearchParams(window.location.search);
 
-	numprofiles = 30;
+	numprofiles = 10;
 	singlenumprofiles = 3;
 	i = 0;
 	if (query.has('z')) {
@@ -439,11 +450,9 @@ window.onload = function() {
 		}, 43);
 	}
 
-	if (query.has('rw')) {
-		setTimeout(function() {
-			randomWinodws();
-		}, 1000);
-	}
+    setTimeout(function() {
+        randomWinodws();
+    }, 2000);
 
 	if (query.has('app')) {
 		var app = query.get('app');
