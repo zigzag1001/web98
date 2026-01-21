@@ -286,6 +286,12 @@ function weekoldroadkill(halfpage = true, side = 'left') {
                 iframeCallback: programmabledronesIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/programmable-drones',
                 siteUrl: WURL + '/programmable-drones/'
+            },
+            {
+                buttonText: 'Pixel Art Anti Aliasing',
+                iframeCallback: pixelartanialiasingIframe,
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/bevy_pixel_art',
+                siteUrl: WURL + '/bevy_pixel_art/'
             }
         ],
         sourceLink: 'https://gitlab.com/weekOldRoadkill',
@@ -332,6 +338,11 @@ function dronesIframe() {
 function programmabledronesIframe() {
     addWindow(simpleIframe(WURL + '/programmable-drones/', opts = { title: 'Programmable Drones', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
 }
+
+function pixelartanialiasingIframe() {
+    addWindow(simpleIframe(WURL + '/bevy_pixel_art/', opts = { title: 'Pixel Art Anti Aliasing', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
+}
+
 
 function zigzag1001(halfpage = true, side = 'right') {
     createProfileFromJson({
