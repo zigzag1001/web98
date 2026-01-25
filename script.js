@@ -123,6 +123,9 @@ function createWindow(opts = {}) {
 	if (opts.max)
 		window_.dataset.max = true;
 
+    if (opts.tag)
+        window_.dataset.tag = opts.tag;
+
 	return window_;
 }
 

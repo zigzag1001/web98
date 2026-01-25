@@ -145,13 +145,26 @@ const windowSize = {
  * @param {Object} profileJson - The profile data.
  * @param {string} [profileJson.title] - Title of the window.
  * @param {string} [profileJson.img] - Profile image URL.
+ * @param {String} [proifleJson.defaultIcon='circle_question-0.png'] - Default icon for the profile.
+ *
  * @param {Array} profileJson.rows - Array of row objects for createFlexRow.
- * Each row: { buttonText, iframeCallback, sourceUrl, siteUrl }
+ * Each row: { buttonText, ~iframeCallback~, sourceUrl, siteUrl, width, height, max, canResize, x, y, icon }
  * @param {string} [profileJson.sourceLink] - Optional source link URL.
  * @param {string} [profileJson.sourceText] - Button text for source link.
+ *
+ *
  * @param {boolean} [halfpage=true] - Whether to use halfpage layout.
+ * @param {string} [side='left'] - Side for halfpage layout ('left' or 'right').
  */
 function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
+
+    // count number of windows with dataset tag profileJson.title
+    var count = 0;
+    document.querySelectorAll('.window').forEach((win) => {
+            count += (win.dataset.tag === profileJson.title) ? 1 : 0;
+        }
+    );
+
     var windowbody = document.createElement('div');
     windowbody.className = 'window-body profile';
 
@@ -169,14 +182,39 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
     let height = rows.length > 5 ? 500 : undefined;
     let flexRows = [];
 
+    // iterate over projects
     for (let i = 0; i < rows.length; i++) {
+        // iframeCreate function instead of iframeCallback
+        let iframeCreate = () => {
+            addWindow(simpleIframe(
+                rows[i].siteUrl,
+                opts = {
+                    title: rows[i].buttonText,
+                    max: rows[i].max,
+                    canResize: rows[i].canResize,
+                    width: rows[i].width || windowSize.width,
+                    height: rows[i].height || windowSize.height
+                },
+                rows[i].x || 0,
+                rows[i].y || 0
+            ));
+        }
+
+        if (count == 0) {
+            addIcon(createIcon(
+                rows[i].icon || profileJson.defaultIcon || 'circle_question-0.png',
+                rows[i].buttonText,
+                iframeCreate
+            ));
+        }
+
         // For column-reverse, first element is visually bottom, so bottomMargin only for last
         // let bottomMargin = i === rows.length - 1 ? true : false;
         let bottomMargin = i === 0 ? false : true;
         let flexRow = createFlexRow(
             link_container,
             rows[i].buttonText,
-            rows[i].iframeCallback,
+            iframeCreate,
             rows[i].sourceUrl,
             rows[i].siteUrl,
             bottomMargin
@@ -210,7 +248,8 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
     var custom = createWindow({
         body: windowbody,
         title: profileJson.title || '',
-        height: height
+        height: height,
+        tag: profileJson.title || ''
     });
 
     if (halfpage) {
@@ -226,70 +265,62 @@ function weekoldroadkill(halfpage = true, side = 'left') {
     createProfileFromJson({
         title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill',
         img: 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800',
+        defaultIcon: 'gears-0.png',
         rows: [
             {
                 buttonText: 'Base Converter',
-                iframeCallback: baseConverterIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/base-converter',
-                siteUrl: WURL + '/base-converter/'
+                siteUrl: WURL + '/base-converter/',
+                width: 271,
+                height: 347,
             },
             {
                 buttonText: 'Screaming Insects',
-                iframeCallback: screaminginsectsIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/screaming-insects',
                 siteUrl: WURL + '/screaming-insects/'
             },
             {
                 buttonText: 'Traveling Salesman',
-                iframeCallback: travelingsalesmanIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/traveling-salesman',
                 siteUrl: WURL + '/traveling-salesman/'
             },
             {
                 buttonText: 'Inverse Kinematics',
-                iframeCallback: inverseKinematicsIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/inverse-kinematics',
                 siteUrl: WURL + '/inverse-kinematics/'
             },
             {
                 buttonText: 'Sorting',
-                iframeCallback: sortingIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/sorting',
                 siteUrl: WURL + '/sorting/'
             },
             {
                 buttonText: 'Boids',
-                iframeCallback: boidsIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/boids',
                 siteUrl: WURL + '/boids/'
             },
             {
                 buttonText: 'Verlet',
-                iframeCallback: verletIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/verlet',
                 siteUrl: WURL + '/verlet/'
             },
             {
                 buttonText: 'Perlin',
-                iframeCallback: perlinIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/perlin',
                 siteUrl: WURL + '/perlin/'
             },
             {
                 buttonText: 'Drones',
-                iframeCallback: dronesIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/drones',
                 siteUrl: WURL + '/drones/'
             },
             {
                 buttonText: 'Programmable Drones',
-                iframeCallback: programmabledronesIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/programmable-drones',
                 siteUrl: WURL + '/programmable-drones/'
             },
             {
                 buttonText: 'Pixel Art Anti Aliasing',
-                iframeCallback: pixelartanialiasingIframe,
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/bevy_pixel_art',
                 siteUrl: WURL + '/bevy_pixel_art/'
             }
@@ -299,71 +330,25 @@ function weekoldroadkill(halfpage = true, side = 'left') {
     }, halfpage, side);
 }
 
-function travelingsalesmanIframe() {
-	addWindow(simpleIframe(WURL + '/traveling-salesman/index.html', opts = { title: 'Traveling Salesman', max: true, canResize: true, height: windowSize.height, width: windowSize.width }), 0, 0);
-}
-
-function baseConverterIframe() {
-	addWindow(simpleIframe(WURL + '/base-converter/index.html', opts = { title: 'Base Converter', width: 271, height: 347, canResize: true }), 0, 0);
-}
-
-function screaminginsectsIframe() {
-	addWindow(simpleIframe(WURL + '/screaming-insects/index.html', opts = { title: 'Screaming Insects', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function inverseKinematicsIframe() {
-	addWindow(simpleIframe(WURL + '/inverse-kinematics/', opts = { title: 'Inverse Kinematics', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function sortingIframe() {
-	addWindow(simpleIframe(WURL + '/sorting/', opts = { title: 'Sorting', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function boidsIframe() {
-	addWindow(simpleIframe(WURL + '/boids/', opts = { title: 'Boids', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function verletIframe() {
-	addWindow(simpleIframe(WURL + '/verlet/', opts = { title: 'Verlet', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function perlinIframe() {
-	addWindow(simpleIframe(WURL + '/perlin/', opts = { title: 'Perlin', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function dronesIframe() {
-    addWindow(simpleIframe(WURL + '/drones/', opts = { title: 'Drones', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function programmabledronesIframe() {
-    addWindow(simpleIframe(WURL + '/programmable-drones/', opts = { title: 'Programmable Drones', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function pixelartanialiasingIframe() {
-    addWindow(simpleIframe(WURL + '/bevy_pixel_art/', opts = { title: 'Pixel Art Anti Aliasing', max: true, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
 
 function zigzag1001(halfpage = true, side = 'right') {
     createProfileFromJson({
         title: '👑\xa0\xa0\xa0\xa0zigzag1001',
         img: './img/pfp.gif',
+        defaultIcon: 'defragment-0.png',
         rows: [
             {
                 buttonText: 'Pixel Wind',
-                iframeCallback: pixelWindIframe,
                 sourceUrl: 'https://github.com/zigzag1001/pixelWind/tree/wasm',
                 siteUrl: ZURL + '/pixelWind/'
             },
             {
                 buttonText: 'web98',
-                iframeCallback: web98Iframe,
                 sourceUrl: 'https://github.com/zigzag1001/web98',
                 siteUrl: ZURL + '/web98/'
             },
             {
                 buttonText: 'Pixel Sort',
-                iframeCallback: pixelSortIframe,
                 sourceUrl: 'https://github.com/zigzag1001/pixel-sort-rs',
                 siteUrl: ZURL + '/pixel-sort-rs/'
             }
@@ -373,17 +358,6 @@ function zigzag1001(halfpage = true, side = 'right') {
     }, halfpage, side);
 }
 
-function pixelWindIframe(max = true) {
-	addWindow(simpleIframe('/pixelWind/index.html', opts = { title: 'pixelWind', max: max, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function web98Iframe() {
-	addWindow(simpleIframe('/web98/index.html', opts = { title: 'web98', max: false, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
-
-function pixelSortIframe(max = true) {
-	addWindow(simpleIframe('/pixel-sort-rs/index.html', opts = { title: 'Pixel Sort', max: max, canResize: true, width: windowSize.width, height: windowSize.height }), 0, 0);
-}
 
 function shuffleArray(array) {
 	for (let i = array.length - 1; i >= 0; i--) {
@@ -404,27 +378,27 @@ addIcon(createIcon(weekoldroadkillicon, 'weekOldRoadkill', weekoldroadkill));
 addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
 
 
-var apps = [createIcon('msg_warning-0.png', 'Random Windows', randomWinodws),
-createIcon('internet_connection_wiz-4.png', 'Custom Window', customWin),
-createIcon('defragment-0.png', 'pixelWind', pixelWindIframe),
-createIcon('defragment-0.png', 'Pixel Sort', pixelSortIframe),
-
-createIcon('accessibility_big_keys.png', 'Base Converter', baseConverterIframe),
-createIcon('msn3-5.png', 'Screaming Insects', screaminginsectsIframe),
-createIcon('gears-0.png', 'Traveling Salesman', travelingsalesmanIframe),
-createIcon('gears-0.png', 'Inverse Kinematics', inverseKinematicsIframe),
-createIcon('gears-0.png', 'Sorting', sortingIframe),
-createIcon('gears-0.png', 'Boids', boidsIframe),
-createIcon('gears-0.png', 'Verlet', verletIframe),
-createIcon('gears-0.png', 'Perlin', perlinIframe),
-];
-shuffleArray(apps);
-for (var i = 0; i < apps.length; i++) {
-	addIcon(apps[i]);
-}
+// var apps = [createIcon('msg_warning-0.png', 'Random Windows', randomWinodws),
+// createIcon('internet_connection_wiz-4.png', 'Custom Window', customWin),
+// createIcon('defragment-0.png', 'pixelWind', pixelWindIframe),
+// createIcon('defragment-0.png', 'Pixel Sort', pixelSortIframe),
+//
+// createIcon('accessibility_big_keys.png', 'Base Converter', baseConverterIframe),
+// createIcon('msn3-5.png', 'Screaming Insects', screaminginsectsIframe),
+// createIcon('gears-0.png', 'Traveling Salesman', travelingsalesmanIframe),
+// createIcon('gears-0.png', 'Inverse Kinematics', inverseKinematicsIframe),
+// createIcon('gears-0.png', 'Sorting', sortingIframe),
+// createIcon('gears-0.png', 'Boids', boidsIframe),
+// createIcon('gears-0.png', 'Verlet', verletIframe),
+// createIcon('gears-0.png', 'Perlin', perlinIframe),
+// ];
+// shuffleArray(apps);
+// for (var i = 0; i < apps.length; i++) {
+// 	addIcon(apps[i]);
+// }
 
 addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'))
-addWindow(simpleImage('https://camo.githubusercontent.com/ed3b0212c8a48e5115aa87c48e4fc5fccf3d602f9dbd95bf460d895a91c47576/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
+addWindow(simpleImage('https://camo.githubusercontent.com/65b4f007ed9bd5acc0b0cf783286fed2c564f8799d84e54e54c4d0267eabb004/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
 
 
 window.onload = function() {
