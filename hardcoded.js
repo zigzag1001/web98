@@ -255,7 +255,7 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
     if (halfpage) {
         var mx = window.innerWidth / 2;
         var x = (side === "right") ? mx : 0;
-        addWindow(custom, x, 0, mx);
+        addWindow(custom, x, 0, mx, 0, false, true);
     } else {
         addWindow(custom);
     }
@@ -433,16 +433,25 @@ window.onload = function() {
 		}, 86);
 	} else if (!query.has('z') && !query.has('w') && !query.has('no')) {
 		const interval = setInterval(function() {
-			if (i % 2 == 0) {
-				weekoldroadkill();
-			} else {
-				zigzag1001();
-			}
+
+			zigzag1001();
+
 			i++;
 			if (i >= numprofiles) {
 				clearInterval(interval);
+                resetCascade();
+                i = 0;
+                const interval2 = setInterval(function() {
+
+                    weekoldroadkill();
+
+                    i++;
+                    if (i >= numprofiles) {
+                        clearInterval(interval2);
+                    }
+                }, 100);
 			}
-		}, 43);
+		}, 100);
 	}
 
     setTimeout(function() {

@@ -129,7 +129,20 @@ function createWindow(opts = {}) {
 	return window_;
 }
 
-function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
+
+var cascadeX = 0;
+var cascadeY = 0;
+var stackLength = 0;
+const cascadeOffsset = 15;
+const maxCascade = 4;
+
+function resetCascade() {
+    stackLength = 0;
+    cascadeX = 0;
+    cascadeY = 0;
+}
+
+function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade = false) {
 
 	taskbar(win, 'add');
 
@@ -152,8 +165,42 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0) {
 		my = 0;
 	}
 
-	x += Math.floor(Math.random() * mx);
-	y += Math.floor(Math.random() * my);
+    if (cascade) {
+        // console.log('cascade', stackLength, cascadeX, cascadeY, mx, my);
+        if (stackLength >= maxCascade) {
+            resetCascade();
+        } else if (x - cascadeX + cascadeOffsset > mx || y - cascadeY + cascadeOffsset > my) {
+            console.log(cascadeX, cascadeY, mx, my);
+            resetCascade();
+        }
+    }
+
+    if (randomize || (cascade && cascadeX == 0 && cascadeY == 0)) {
+
+        x += Math.floor(Math.random() * mx);
+        y += Math.floor(Math.random() * my);
+
+        if (cascade) {
+            cascadeX = x;
+            cascadeY = y;
+        }
+
+    } else {
+
+        x = Math.min(x, mx);
+        y = Math.min(y, my);
+
+    }
+
+    if (cascade) {
+
+        x = cascadeX;
+        y = cascadeY;
+        cascadeX += cascadeOffsset;
+        cascadeY += cascadeOffsset;
+        stackLength++;
+    }
+
 
 	win.style.zIndex = maxz++;
 	win.style.left = x + 'px';
