@@ -323,6 +323,11 @@ function weekoldroadkill(halfpage = true, side = 'left') {
                 buttonText: 'Pixel Art Anti Aliasing',
                 sourceUrl: 'https://gitlab.com/weekOldRoadkill/bevy_pixel_art',
                 siteUrl: WURL + '/bevy_pixel_art/'
+            },
+            {
+                buttonText: 'Web XP',
+                sourceUrl: 'https://gitlab.com/weekOldRoadkill/web_xp',
+                siteUrl: WURL + '/web_xp/'
             }
         ],
         sourceLink: 'https://gitlab.com/weekOldRoadkill',
