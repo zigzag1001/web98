@@ -134,36 +134,117 @@ const cascadeOffsset = 15;
 const maxCascade = 4;
 
 // ==================== APP REGISTRY ====================
-// Central registry for all available applications
+// Central registry for all applications
 const APP_REGISTRY = {
-	// Profile applications - populated by hardcoded.js
-	profiles: {},
-	// Utility applications
-	utilities: {},
-	// Cascade state for each profile
-	cascadeState: {}
+	// App definitions - templates/configuration for all possible apps
+	appDefinitions: {
+		profiles: {},      // Profile apps (weekoldroadkill, zigzag1001)
+		utilities: {},     // Utility apps (randomWindows, customWindow)
+		projects: {}       // Individual project apps
+	},
+	// Active instances - currently open windows/apps with their state
+	activeInstances: {}   // Format: {appId: {id, cascadeState, wins: [{div, metadata}]}}
 };
 
-// Reset cascade for a specific profile
-function resetCascade(profileId) {
-	if (profileId) {
-		APP_REGISTRY.cascadeState[profileId] = {
-			x: 0,
-			y: 0,
-			stackLength: 0
+// Backwards compatibility aliases
+Object.defineProperty(APP_REGISTRY, 'profiles', {
+	get() { return this.appDefinitions.profiles; },
+	set(value) { this.appDefinitions.profiles = value; }
+});
+Object.defineProperty(APP_REGISTRY, 'utilities', {
+	get() { return this.appDefinitions.utilities; },
+	set(value) { this.appDefinitions.utilities = value; }
+});
+
+/**
+ * Register an active app instance
+ * @param {string} appId - Unique identifier for the app
+ * @param {HTMLElement} div - The window div element
+ * @param {Object} metadata - Additional metadata about the instance
+ * @param {Object} appDefinition - App definition with default settings
+ */
+function registerActiveApp(appId, div, metadata = {}, appDefinition = {}) {
+	if (!APP_REGISTRY.activeInstances[appId]) {
+		APP_REGISTRY.activeInstances[appId] = {
+			id: appId,
+			definition: appDefinition,
+			cascadeState: {
+				enabled: appDefinition.cascade !== false, // Default to true unless explicitly disabled
+				x: 0,
+				y: 0,
+				stackLength: 0
+			},
+			wins: []
 		};
 	}
+	
+	APP_REGISTRY.activeInstances[appId].wins.push({
+		div: div,
+		metadata: metadata,
+		timestamp: Date.now()
+	});
 }
 
-// Get cascade state for a profile (creates if doesn't exist)
-function getCascadeState(profileId) {
-	if (!APP_REGISTRY.cascadeState[profileId]) {
-		resetCascade(profileId);
+/**
+ * Unregister an active app instance
+ * @param {string} appId - App identifier
+ * @param {HTMLElement} div - The window div to remove
+ */
+function unregisterActiveApp(appId, div) {
+	const activeApp = APP_REGISTRY.activeInstances[appId];
+	if (activeApp) {
+		activeApp.wins = activeApp.wins.filter(win => win.div !== div);
+		// Clean up if no more instances
+		if (activeApp.wins.length === 0) {
+			delete APP_REGISTRY.activeInstances[appId];
+		}
 	}
-	return APP_REGISTRY.cascadeState[profileId];
 }
 
-function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade = false, profileId = null) {
+/**
+ * Get active app by ID
+ * @param {string} appId - App identifier
+ * @returns {Object|null} Active app object or null
+ */
+function getActiveApp(appId) {
+	return APP_REGISTRY.activeInstances[appId] || null;
+}
+
+/**
+ * Get all active apps of a specific type
+ * @param {string} type - Type filter (optional)
+ * @returns {Array} Array of active app objects
+ */
+function getAllActiveApps(type = null) {
+	const apps = Object.values(APP_REGISTRY.activeInstances);
+	if (type) {
+		return apps.filter(app => app.definition && app.definition.type === type);
+	}
+	return apps;
+}
+
+// Reset cascade for a specific app
+function resetCascade(appId) {
+	const activeApp = getActiveApp(appId);
+	if (activeApp && activeApp.cascadeState) {
+		activeApp.cascadeState.x = 0;
+		activeApp.cascadeState.y = 0;
+		activeApp.cascadeState.stackLength = 0;
+	}
+}
+
+// Get cascade state for an app (creates if doesn't exist)
+function getCascadeState(appId) {
+	let activeApp = getActiveApp(appId);
+	if (!activeApp) {
+		// Create a temporary entry if it doesn't exist
+		registerActiveApp(appId, null, {}, { cascade: true });
+		activeApp = getActiveApp(appId);
+	}
+	return activeApp.cascadeState;
+}
+
+function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade = false, appId = null, appDefinition = {}) {
 
 	taskbar(win, 'add');
 
@@ -186,24 +267,27 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 		my = 0;
 	}
 
-	if (cascade && profileId) {
-		const state = getCascadeState(profileId);
+	// Use appId for cascade tracking (backward compatible with profileId)
+	const cascadeId = appId;
+	
+	if (cascade && cascadeId) {
+		const state = getCascadeState(cascadeId);
 		// console.log('cascade', state.stackLength, state.x, state.y, mx, my);
 		if (state.stackLength >= maxCascade) {
-			resetCascade(profileId);
+			resetCascade(cascadeId);
 		} else if (x - state.x + cascadeOffsset > mx || y - state.y + cascadeOffsset > my) {
 			console.log(state.x, state.y, mx, my);
-			resetCascade(profileId);
+			resetCascade(cascadeId);
 		}
 	}
 
-	if (randomize || (cascade && profileId && getCascadeState(profileId).x == 0 && getCascadeState(profileId).y == 0)) {
+	if (randomize || (cascade && cascadeId && getCascadeState(cascadeId).x == 0 && getCascadeState(cascadeId).y == 0)) {
 
 		x += Math.floor(Math.random() * mx);
 		y += Math.floor(Math.random() * my);
 
-		if (cascade && profileId) {
-			const state = getCascadeState(profileId);
+		if (cascade && cascadeId) {
+			const state = getCascadeState(cascadeId);
 			state.x = x;
 			state.y = y;
 		}
@@ -215,8 +299,8 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 
 	}
 
-	if (cascade && profileId) {
-		const state = getCascadeState(profileId);
+	if (cascade && cascadeId) {
+		const state = getCascadeState(cascadeId);
 		x = state.x;
 		y = state.y;
 		state.x += cascadeOffsset;
@@ -236,6 +320,16 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 	setTimeout(() => {
 		win.classList.remove('animate__' + intro);
 	}, 1000);
+	
+	// Register the window in active instances if appId is provided
+	if (appId) {
+		registerActiveApp(appId, win, {
+			x: x,
+			y: y,
+			width: win.style.width,
+			height: win.style.height
+		}, appDefinition);
+	}
 }
 
 function simplebody(text) {
@@ -275,7 +369,9 @@ function randwin() {
 		removeWindow(div);
 	};
 
-	addWindow(div, 0, 0);
+	// Get app definition for randwin and use cascade if enabled
+	const appDef = APP_REGISTRY.appDefinitions.utilities?.randwin || { cascade: true };
+	addWindow(div, 0, 0, 0, 0, true, appDef.cascade, 'randwin', appDef);
 
 	setTimeout(() => {
 		div.classList.remove('animate__' + intro);
@@ -289,6 +385,12 @@ function removeWindow(win, delay = 1000) {
 	}
 	win.classList.add('animate__' + outro);
 	taskbar(win, 'remove');
+	
+	// Unregister from all active apps
+	for (const appId in APP_REGISTRY.activeInstances) {
+		unregisterActiveApp(appId, win);
+	}
+	
 	setTimeout(() => {
 		win.remove();
 	}, delay);
@@ -399,7 +501,9 @@ function maximizeWindow(win) {
 
 // fill the screen with random windows
 function fillRandWin() {
-	umami.track('fillRandWin');
+	if (typeof umami !== 'undefined') {
+		umami.track('fillRandWin');
+	}
 	if (removing) return;
 	const interval = setInterval(() => {
 		randwin();

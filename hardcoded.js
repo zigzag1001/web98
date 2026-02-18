@@ -1,3 +1,38 @@
+// ==================== APP DEFINITIONS ====================
+// Define default settings for all apps
+
+// Random Windows app definition
+APP_REGISTRY.appDefinitions.utilities.randomWindows = {
+	id: 'randomWindows',
+	name: 'Random Windows',
+	type: 'utility',
+	icon: 'msg_warning-0.png',
+	cascade: true,  // Enable cascade by default
+	width: 250,
+	height: 200,
+	handler: randomWinodws
+};
+
+// Custom Window app definition
+APP_REGISTRY.appDefinitions.utilities.customWindow = {
+	id: 'customWindow',
+	name: 'Custom Window',
+	type: 'utility',
+	icon: 'internet_connection_wiz-4.png',
+	cascade: false,
+	handler: customWin
+};
+
+// Random window (individual) definition
+APP_REGISTRY.appDefinitions.utilities.randwin = {
+	id: 'randwin',
+	name: 'Random Window',
+	type: 'utility',
+	cascade: true,  // Individual random windows can cascade
+	width: 250,
+	height: 200
+};
+
 // random winow creation controller
 function randomWinodws() {
 	var windowbody = document.createElement('div');
@@ -49,7 +84,8 @@ function randomWinodws() {
 	var div = createWindow({ body: windowbody });
 	div.classList.add('randwincontrol');
 
-	addWindow(div);
+	// Register as a control window for random windows
+	addWindow(div, 0, 0, 0, 0, true, false, 'randomWindowsControl', APP_REGISTRY.appDefinitions.utilities.randomWindows);
 }
 
 
@@ -76,14 +112,14 @@ function customWin() {
 			body: simplebody(in_winbody.value)
 		});
 		div.classList.add('customwin');
-		addWindow(div);
+		addWindow(div, 0, 0, 0, 0, true, false, 'customWindow', APP_REGISTRY.appDefinitions.utilities.customWindow);
 		umami.track('customwin');
 	}
 
 	var custom = createWindow({ body: windowbody, title: 'Create Custom Window' })
 	custom.classList.add('customwincontrol');
 
-	addWindow(custom);
+	addWindow(custom, 0, 0, 0, 0, true, false, 'customWindowControl', APP_REGISTRY.appDefinitions.utilities.customWindow);
 }
 
 
@@ -394,12 +430,15 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left', prof
         tag: profileJson.title || ''
     });
 
+    // Get app definition for the profile
+    const appDef = APP_REGISTRY.appDefinitions.profiles[profileId] || APP_REGISTRY.profiles[profileId] || { cascade: true };
+    
     if (halfpage) {
         var mx = window.innerWidth / 2;
         var x = (side === "right") ? mx : 0;
-        addWindow(custom, x, 0, mx, 0, false, true, profileId);
+        addWindow(custom, x, 0, mx, 0, false, true, profileId, appDef);
     } else {
-        addWindow(custom, 0, 0, 0, 0, true, false, profileId);
+        addWindow(custom, 0, 0, 0, 0, true, false, profileId, appDef);
     }
 }
 
