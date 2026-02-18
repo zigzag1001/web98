@@ -275,7 +275,7 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 	if (!appId) {
 		const titleElement = win.querySelector('.title-bar-text');
 		if (titleElement && titleElement.textContent) {
-			// Use title as appId, sanitized for use as ID
+			// Use title as appId (whitespace only trimmed, not fully sanitized)
 			appId = titleElement.textContent.trim();
 		}
 	}
@@ -846,8 +846,8 @@ function simpleIframe(src, opts = {}) {
 	});
 	c.dataset.aniDelay = 1;
 	
-	// Store cascade option for use with addWindow
-	c.dataset.cascade = opts.cascade;
+	// Store cascade option as string for consistent retrieval
+	c.dataset.cascade = String(opts.cascade);
 
     // TODO: testing to get title from iframe
     iframe.onload = function() {
@@ -856,6 +856,17 @@ function simpleIframe(src, opts = {}) {
     };
 
 	return c;
+}
+
+/**
+ * Helper function to add an iframe window with proper cascade handling
+ * @param {HTMLElement} iframe - The iframe window element from simpleIframe
+ * @param {number} x - X position (default: 0)
+ * @param {number} y - Y position (default: 0)
+ */
+function addIframeWindow(iframe, x = 0, y = 0) {
+	const useCascade = iframe.dataset.cascade === 'true';
+	addWindow(iframe, x, y, 0, 0, !useCascade, useCascade);
 }
 
 // desktop icons
@@ -916,9 +927,7 @@ addIcon(closeAllIcon);
 
 // recursive window
 addIcon(createIcon(null, 'web98', () => {
-	const iframe = simpleIframe('https://weekoldroadkill.com', { title: 'nahhh', max: false });
-	const useCascade = iframe.dataset.cascade === 'true';
-	addWindow(iframe, 0, 0, 0, 0, !useCascade, useCascade);
+	addIframeWindow(simpleIframe('https://weekoldroadkill.com', { title: 'nahhh', max: false }));
 }));
 
 // opts: title, width, height
@@ -1173,14 +1182,12 @@ function executeStartup(config) {
 			
 			if (foundProject) {
 				// Dynamically create iframe from project
-				const iframe = simpleIframe(foundProject.siteUrl, {
+				addIframeWindow(simpleIframe(foundProject.siteUrl, {
 					title: foundProject.buttonText,
 					max: true,
 					width: foundProject.width || 1044,
 					height: foundProject.height || 612
-				});
-				const useCascade = iframe.dataset.cascade === 'true';
-				addWindow(iframe, 0, 0, 0, 0, !useCascade, useCascade);
+				}));
 			} else {
 				console.warn(`App ${config.directApp} not found`);
 			}

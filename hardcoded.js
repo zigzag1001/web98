@@ -368,7 +368,7 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left', prof
     for (let i = 0; i < rows.length; i++) {
         // iframeCreate function instead of iframeCallback
         let iframeCreate = () => {
-            const iframe = simpleIframe(
+            addIframeWindow(simpleIframe(
                 rows[i].siteUrl,
                 opts = {
                     title: rows[i].buttonText,
@@ -377,10 +377,7 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left', prof
                     width: rows[i].width || windowSize.width,
                     height: rows[i].height || windowSize.height
                 }
-            );
-            // Use cascade from iframe dataset if available
-            const useCascade = iframe.dataset.cascade === 'true';
-            addWindow(iframe, rows[i].x || 0, rows[i].y || 0, 0, 0, !useCascade, useCascade);
+            ), rows[i].x || 0, rows[i].y || 0);
         }
 
         if (count == 0) {
