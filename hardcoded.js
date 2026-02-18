@@ -1,3 +1,42 @@
+// ==================== APP DEFINITIONS ====================
+// Define default settings for all apps
+
+// Random Windows app definition
+APP_REGISTRY.appDefinitions.utilities.randomWindows = {
+	id: 'randomWindows',
+	name: 'Random Windows',
+	type: 'utility',
+	icon: 'msg_warning-0.png',
+	cascade: true,  // Enable cascade by default
+	cascadeOffset: 15,  // Custom cascade offset
+	maxCascade: 4,  // Custom max cascade stack
+	width: 250,
+	height: 200,
+	handler: randomWinodws
+};
+
+// Custom Window app definition
+APP_REGISTRY.appDefinitions.utilities.customWindow = {
+	id: 'customWindow',
+	name: 'Custom Window',
+	type: 'utility',
+	icon: 'internet_connection_wiz-4.png',
+	cascade: false,
+	handler: customWin
+};
+
+// Random window (individual) definition
+APP_REGISTRY.appDefinitions.utilities.randwin = {
+	id: 'randwin',
+	name: 'Random Window',
+	type: 'utility',
+	cascade: true,  // Individual random windows can cascade
+	cascadeOffset: 15,  // Custom cascade offset
+	maxCascade: 4,  // Custom max cascade stack
+	width: 250,
+	height: 200
+};
+
 // random winow creation controller
 function randomWinodws() {
 	var windowbody = document.createElement('div');
@@ -49,7 +88,8 @@ function randomWinodws() {
 	var div = createWindow({ body: windowbody });
 	div.classList.add('randwincontrol');
 
-	addWindow(div);
+	// Register as a control window for random windows
+	addWindow(div, 0, 0, 0, 0, true, false, 'randomWindowsControl', APP_REGISTRY.appDefinitions.utilities.randomWindows);
 }
 
 
@@ -76,14 +116,14 @@ function customWin() {
 			body: simplebody(in_winbody.value)
 		});
 		div.classList.add('customwin');
-		addWindow(div);
+		addWindow(div, 0, 0, 0, 0, true, false, 'customWindow', APP_REGISTRY.appDefinitions.utilities.customWindow);
 		umami.track('customwin');
 	}
 
 	var custom = createWindow({ body: windowbody, title: 'Create Custom Window' })
 	custom.classList.add('customwincontrol');
 
-	addWindow(custom);
+	addWindow(custom, 0, 0, 0, 0, true, false, 'customWindowControl', APP_REGISTRY.appDefinitions.utilities.customWindow);
 }
 
 
@@ -140,6 +180,148 @@ const windowSize = {
 	width: 1044
 };
 
+// ==================== PROFILE DATA ====================
+// Add weekoldroadkill profile to APP_REGISTRY
+APP_REGISTRY.profiles.weekoldroadkill = {
+	id: 'weekoldroadkill',
+	name: 'weekOldRoadkill',
+	icon: null, // Will be set dynamically
+	handler: weekoldroadkill,
+	projects: [
+		{
+			buttonText: 'Base Converter',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/base-converter',
+			siteUrl: WURL + '/base-converter/',
+			width: 271,
+			height: 347,
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Screaming Insects',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/screaming-insects',
+			siteUrl: WURL + '/screaming-insects/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Traveling Salesman',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/traveling-salesman',
+			siteUrl: WURL + '/traveling-salesman/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Inverse Kinematics',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/inverse-kinematics',
+			siteUrl: WURL + '/inverse-kinematics/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Sorting',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/sorting',
+			siteUrl: WURL + '/sorting/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Boids',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/boids',
+			siteUrl: WURL + '/boids/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Verlet',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/verlet',
+			siteUrl: WURL + '/verlet/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Perlin',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/perlin',
+			siteUrl: WURL + '/perlin/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Drones',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/drones',
+			siteUrl: WURL + '/drones/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Programmable Drones',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/programmable-drones',
+			siteUrl: WURL + '/programmable-drones/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Pixel Art Anti Aliasing',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/bevy_pixel_art',
+			siteUrl: WURL + '/bevy_pixel_art/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Web XP',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/web_xp',
+			siteUrl: WURL + '/web_xp/',
+			icon: 'gears-0.png',
+		}
+	],
+	profileData: {
+		title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill',
+		img: 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800',
+		defaultIcon: 'gears-0.png',
+		sourceLink: 'https://gitlab.com/weekOldRoadkill',
+		sourceText: 'GitLab'
+	}
+};
+
+// Add zigzag1001 profile to APP_REGISTRY
+APP_REGISTRY.profiles.zigzag1001 = {
+	id: 'zigzag1001',
+	name: 'zigzag1001',
+	icon: null, // Will be set dynamically
+	handler: zigzag1001,
+	projects: [
+		{
+			buttonText: 'Pixel Wind',
+			sourceUrl: 'https://github.com/zigzag1001/pixelWind/tree/wasm',
+			siteUrl: ZURL + '/pixelWind/',
+			icon: 'defragment-0.png',
+		},
+		{
+			buttonText: 'web98',
+			sourceUrl: 'https://github.com/zigzag1001/web98',
+			siteUrl: ZURL + '/web98/',
+			icon: 'defragment-0.png',
+		},
+		{
+			buttonText: 'Pixel Sort',
+			sourceUrl: 'https://github.com/zigzag1001/pixel-sort-rs',
+			siteUrl: ZURL + '/pixel-sort-rs/',
+			icon: 'defragment-0.png',
+		}
+	],
+	profileData: {
+		title: '👑\xa0\xa0\xa0\xa0zigzag1001',
+		img: './img/pfp.gif',
+		defaultIcon: 'defragment-0.png',
+		sourceLink: 'https://github.com/zigzag1001',
+		sourceText: 'GitHub'
+	}
+};
+
+// Add utility applications to APP_REGISTRY
+APP_REGISTRY.utilities.randomWindows = {
+	id: 'randomWindows',
+	name: 'Random Windows',
+	icon: 'msg_warning-0.png',
+	handler: randomWinodws
+};
+
+APP_REGISTRY.utilities.customWindow = {
+	id: 'customWindow',
+	name: 'Custom Window',
+	icon: 'internet_connection_wiz-4.png',
+	handler: customWin
+};
+
 /**
  * Create a profile window from a JSON object.
  * @param {Object} profileJson - The profile data.
@@ -156,7 +338,7 @@ const windowSize = {
  * @param {boolean} [halfpage=true] - Whether to use halfpage layout.
  * @param {string} [side='left'] - Side for halfpage layout ('left' or 'right').
  */
-function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
+function createProfileFromJson(profileJson, halfpage = true, side = 'left', profileId = null) {
 
     // count number of windows with dataset tag profileJson.title
     var count = 0;
@@ -186,7 +368,7 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
     for (let i = 0; i < rows.length; i++) {
         // iframeCreate function instead of iframeCallback
         let iframeCreate = () => {
-            addWindow(simpleIframe(
+            addIframeWindow(simpleIframe(
                 rows[i].siteUrl,
                 opts = {
                     title: rows[i].buttonText,
@@ -194,10 +376,8 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
                     canResize: rows[i].canResize,
                     width: rows[i].width || windowSize.width,
                     height: rows[i].height || windowSize.height
-                },
-                rows[i].x || 0,
-                rows[i].y || 0
-            ));
+                }
+            ), rows[i].x || 0, rows[i].y || 0);
         }
 
         if (count == 0) {
@@ -252,115 +432,33 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
         tag: profileJson.title || ''
     });
 
+    // Get app definition for the profile
+    const appDef = APP_REGISTRY.appDefinitions.profiles[profileId] || APP_REGISTRY.profiles[profileId] || { cascade: true };
+    
     if (halfpage) {
         var mx = window.innerWidth / 2;
         var x = (side === "right") ? mx : 0;
-        addWindow(custom, x, 0, mx, 0, false, true);
+        addWindow(custom, x, 0, mx, 0, false, true, profileId, appDef);
     } else {
-        addWindow(custom);
+        addWindow(custom, 0, 0, 0, 0, true, false, profileId, appDef);
     }
 }
 
-function weekoldroadkill(halfpage = true, side = 'left') {
+function weekoldroadkill(halfpage = true, side = 'left', profileId = 'weekoldroadkill') {
+    const profile = APP_REGISTRY.profiles.weekoldroadkill;
     createProfileFromJson({
-        title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill',
-        img: 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800',
-        defaultIcon: 'gears-0.png',
-        rows: [
-            {
-                buttonText: 'Base Converter',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/base-converter',
-                siteUrl: WURL + '/base-converter/',
-                width: 271,
-                height: 347,
-            },
-            {
-                buttonText: 'Screaming Insects',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/screaming-insects',
-                siteUrl: WURL + '/screaming-insects/'
-            },
-            {
-                buttonText: 'Traveling Salesman',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/traveling-salesman',
-                siteUrl: WURL + '/traveling-salesman/'
-            },
-            {
-                buttonText: 'Inverse Kinematics',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/inverse-kinematics',
-                siteUrl: WURL + '/inverse-kinematics/'
-            },
-            {
-                buttonText: 'Sorting',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/sorting',
-                siteUrl: WURL + '/sorting/'
-            },
-            {
-                buttonText: 'Boids',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/boids',
-                siteUrl: WURL + '/boids/'
-            },
-            {
-                buttonText: 'Verlet',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/verlet',
-                siteUrl: WURL + '/verlet/'
-            },
-            {
-                buttonText: 'Perlin',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/perlin',
-                siteUrl: WURL + '/perlin/'
-            },
-            {
-                buttonText: 'Drones',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/drones',
-                siteUrl: WURL + '/drones/'
-            },
-            {
-                buttonText: 'Programmable Drones',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/programmable-drones',
-                siteUrl: WURL + '/programmable-drones/'
-            },
-            {
-                buttonText: 'Pixel Art Anti Aliasing',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/bevy_pixel_art',
-                siteUrl: WURL + '/bevy_pixel_art/'
-            },
-            {
-                buttonText: 'Web XP',
-                sourceUrl: 'https://gitlab.com/weekOldRoadkill/web_xp',
-                siteUrl: WURL + '/web_xp/'
-            }
-        ],
-        sourceLink: 'https://gitlab.com/weekOldRoadkill',
-        sourceText: 'GitLab'
-    }, halfpage, side);
+        ...profile.profileData,
+        rows: profile.projects
+    }, halfpage, side, profileId);
 }
 
 
-function zigzag1001(halfpage = true, side = 'right') {
+function zigzag1001(halfpage = true, side = 'right', profileId = 'zigzag1001') {
+    const profile = APP_REGISTRY.profiles.zigzag1001;
     createProfileFromJson({
-        title: '👑\xa0\xa0\xa0\xa0zigzag1001',
-        img: './img/pfp.gif',
-        defaultIcon: 'defragment-0.png',
-        rows: [
-            {
-                buttonText: 'Pixel Wind',
-                sourceUrl: 'https://github.com/zigzag1001/pixelWind/tree/wasm',
-                siteUrl: ZURL + '/pixelWind/'
-            },
-            {
-                buttonText: 'web98',
-                sourceUrl: 'https://github.com/zigzag1001/web98',
-                siteUrl: ZURL + '/web98/'
-            },
-            {
-                buttonText: 'Pixel Sort',
-                sourceUrl: 'https://github.com/zigzag1001/pixel-sort-rs',
-                siteUrl: ZURL + '/pixel-sort-rs/'
-            }
-        ],
-        sourceLink: 'https://github.com/zigzag1001',
-        sourceText: 'GitHub'
-    }, halfpage, side);
+        ...profile.profileData,
+        rows: profile.projects
+    }, halfpage, side, profileId);
 }
 
 
@@ -371,105 +469,20 @@ function shuffleArray(array) {
 	}
 }
 
-// choose random icons
+// Initialize profile icons with random icons
 var icons = ["doctor_watson.png", "msagent-3.png", "msagent_file-1.png", "address_book_user.png", "msagent-4.png", "utopia_smiley.png", "media_player_stream_sun4.png"]
 shuffleArray(icons);
-var zigzag1001icon = icons[0];
-var weekoldroadkillicon = icons[1];
+APP_REGISTRY.profiles.weekoldroadkill.icon = icons[1];
+APP_REGISTRY.profiles.zigzag1001.icon = icons[0];
 
-//weekoldroadkill
-addIcon(createIcon(weekoldroadkillicon, 'weekOldRoadkill', weekoldroadkill));
-//zigzag1001
-addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
+// Create desktop icons for profiles
+addIcon(createIcon(APP_REGISTRY.profiles.weekoldroadkill.icon, APP_REGISTRY.profiles.weekoldroadkill.name, weekoldroadkill));
+addIcon(createIcon(APP_REGISTRY.profiles.zigzag1001.icon, APP_REGISTRY.profiles.zigzag1001.name, zigzag1001));
 
-
-// var apps = [createIcon('msg_warning-0.png', 'Random Windows', randomWinodws),
-// createIcon('internet_connection_wiz-4.png', 'Custom Window', customWin),
-// createIcon('defragment-0.png', 'pixelWind', pixelWindIframe),
-// createIcon('defragment-0.png', 'Pixel Sort', pixelSortIframe),
-//
-// createIcon('accessibility_big_keys.png', 'Base Converter', baseConverterIframe),
-// createIcon('msn3-5.png', 'Screaming Insects', screaminginsectsIframe),
-// createIcon('gears-0.png', 'Traveling Salesman', travelingsalesmanIframe),
-// createIcon('gears-0.png', 'Inverse Kinematics', inverseKinematicsIframe),
-// createIcon('gears-0.png', 'Sorting', sortingIframe),
-// createIcon('gears-0.png', 'Boids', boidsIframe),
-// createIcon('gears-0.png', 'Verlet', verletIframe),
-// createIcon('gears-0.png', 'Perlin', perlinIframe),
-// ];
-// shuffleArray(apps);
-// for (var i = 0; i < apps.length; i++) {
-// 	addIcon(apps[i]);
-// }
-
-addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'))
-addWindow(simpleImage('https://camo.githubusercontent.com/65b4f007ed9bd5acc0b0cf783286fed2c564f8799d84e54e54c4d0267eabb004/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
-
-
+/**
+ * Main startup function - now data-driven!
+ */
 window.onload = function() {
-	const query = new URLSearchParams(window.location.search);
-
-	numprofiles = 10;
-	singlenumprofiles = 3;
-	i = 0;
-	if (query.has('z')) {
-		var tmp = query.get('z');
-		if (tmp > 0) {
-			singlenumprofiles = tmp;
-		}
-		const interval = setInterval(function() {
-			zigzag1001(false);
-			i++;
-			if (i >= singlenumprofiles) {
-				clearInterval(interval);
-			}
-		}, 86);
-	} else if (query.has('w')) {
-		var tmp = query.get('w');
-		if (tmp > 0) {
-			singlenumprofiles = tmp;
-		}
-		const interval = setInterval(function() {
-			weekoldroadkill(false);
-			i++;
-			if (i >= singlenumprofiles) {
-				clearInterval(interval);
-			}
-		}, 86);
-	} else if (!query.has('z') && !query.has('w') && !query.has('no')) {
-		const interval = setInterval(function() {
-
-			zigzag1001();
-
-			i++;
-			if (i >= numprofiles) {
-				clearInterval(interval);
-                resetCascade();
-                i = 0;
-                const interval2 = setInterval(function() {
-
-                    weekoldroadkill();
-
-                    i++;
-                    if (i >= numprofiles) {
-                        clearInterval(interval2);
-                    }
-                }, 100);
-			}
-		}, 100);
-	}
-
-    setTimeout(function() {
-        randomWinodws();
-    }, 2000);
-
-	if (query.has('app')) {
-		var app = query.get('app');
-		if (app == 'pixelwind') {
-			pixelWindIframe(max = true);
-		}
-		if (app == 'pixelsort') {
-			pixelSortIframe(max = true);
-		}
-	}
+	const startupConfig = getStartupConfig();
+	executeStartup(startupConfig);
 }

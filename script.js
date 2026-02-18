@@ -130,19 +130,125 @@ function createWindow(opts = {}) {
 }
 
 
-var cascadeX = 0;
-var cascadeY = 0;
-var stackLength = 0;
-const cascadeOffsset = 15;
-const maxCascade = 4;
+// Default cascade settings (can be overridden per-app)
+const DEFAULT_CASCADE_OFFSET = 15;
+const DEFAULT_MAX_CASCADE = 4;
 
-function resetCascade() {
-    stackLength = 0;
-    cascadeX = 0;
-    cascadeY = 0;
+// ==================== APP REGISTRY ====================
+// Central registry for all applications
+const APP_REGISTRY = {
+	// App definitions - templates/configuration for all possible apps
+	appDefinitions: {
+		profiles: {},      // Profile apps (weekoldroadkill, zigzag1001)
+		utilities: {},     // Utility apps (randomWindows, customWindow)
+		projects: {}       // Individual project apps
+	},
+	// Active instances - currently open windows/apps with their state
+	activeInstances: {}   // Format: {appId: {id, cascadeState, cascadeOffset, maxCascade, wins: [{div, metadata}]}}
+};
+
+// Backwards compatibility aliases
+Object.defineProperty(APP_REGISTRY, 'profiles', {
+	get() { return this.appDefinitions.profiles; },
+	set(value) { this.appDefinitions.profiles = value; }
+});
+Object.defineProperty(APP_REGISTRY, 'utilities', {
+	get() { return this.appDefinitions.utilities; },
+	set(value) { this.appDefinitions.utilities = value; }
+});
+
+/**
+ * Register an active app instance
+ * @param {string} appId - Unique identifier for the app
+ * @param {HTMLElement} div - The window div element
+ * @param {Object} metadata - Additional metadata about the instance
+ * @param {Object} appDefinition - App definition with default settings
+ */
+function registerActiveApp(appId, div, metadata = {}, appDefinition = {}) {
+	if (!APP_REGISTRY.activeInstances[appId]) {
+		APP_REGISTRY.activeInstances[appId] = {
+			id: appId,
+			definition: appDefinition,
+			// Per-app cascade settings with defaults
+			cascadeOffset: appDefinition.cascadeOffset !== undefined ? appDefinition.cascadeOffset : DEFAULT_CASCADE_OFFSET,
+			maxCascade: appDefinition.maxCascade !== undefined ? appDefinition.maxCascade : DEFAULT_MAX_CASCADE,
+			cascadeState: {
+				enabled: appDefinition.cascade !== false, // Default to true unless explicitly disabled
+				x: 0,
+				y: 0,
+				stackLength: 0
+			},
+			wins: []
+		};
+	}
+	
+	APP_REGISTRY.activeInstances[appId].wins.push({
+		div: div,
+		metadata: metadata,
+		timestamp: Date.now()
+	});
 }
 
-function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade = false) {
+/**
+ * Unregister an active app instance
+ * @param {string} appId - App identifier
+ * @param {HTMLElement} div - The window div to remove
+ */
+function unregisterActiveApp(appId, div) {
+	const activeApp = APP_REGISTRY.activeInstances[appId];
+	if (activeApp) {
+		activeApp.wins = activeApp.wins.filter(win => win.div !== div);
+		// Clean up if no more instances
+		if (activeApp.wins.length === 0) {
+			delete APP_REGISTRY.activeInstances[appId];
+		}
+	}
+}
+
+/**
+ * Get active app by ID
+ * @param {string} appId - App identifier
+ * @returns {Object|null} Active app object or null
+ */
+function getActiveApp(appId) {
+	return APP_REGISTRY.activeInstances[appId] || null;
+}
+
+/**
+ * Get all active apps of a specific type
+ * @param {string} type - Type filter (optional)
+ * @returns {Array} Array of active app objects
+ */
+function getAllActiveApps(type = null) {
+	const apps = Object.values(APP_REGISTRY.activeInstances);
+	if (type) {
+		return apps.filter(app => app.definition && app.definition.type === type);
+	}
+	return apps;
+}
+
+// Reset cascade for a specific app
+function resetCascade(appId) {
+	const activeApp = getActiveApp(appId);
+	if (activeApp && activeApp.cascadeState) {
+		activeApp.cascadeState.x = 0;
+		activeApp.cascadeState.y = 0;
+		activeApp.cascadeState.stackLength = 0;
+	}
+}
+
+// Get cascade state for an app (creates if doesn't exist)
+function getCascadeState(appId) {
+	let activeApp = getActiveApp(appId);
+	if (!activeApp) {
+		// Create a temporary entry if it doesn't exist
+		registerActiveApp(appId, null, {}, { cascade: true });
+		activeApp = getActiveApp(appId);
+	}
+	return activeApp.cascadeState;
+}
+
+function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade = false, appId = null, appDefinition = {}) {
 
 	taskbar(win, 'add');
 
@@ -165,41 +271,62 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 		my = 0;
 	}
 
-    if (cascade) {
-        // console.log('cascade', stackLength, cascadeX, cascadeY, mx, my);
-        if (stackLength >= maxCascade) {
-            resetCascade();
-        } else if (x - cascadeX + cascadeOffsset > mx || y - cascadeY + cascadeOffsset > my) {
-            console.log(cascadeX, cascadeY, mx, my);
-            resetCascade();
-        }
-    }
+	// Auto-detect appId from window title if not provided
+	if (!appId) {
+		const titleElement = win.querySelector('.title-bar-text');
+		if (titleElement && titleElement.textContent) {
+			// Use title as appId (whitespace only trimmed, not fully sanitized)
+			appId = titleElement.textContent.trim();
+		}
+	}
+	
+	// Use appId for cascade tracking (backward compatible with profileId)
+	const cascadeId = appId;
+	
+	if (cascade && cascadeId) {
+		const state = getCascadeState(cascadeId);
+		const activeApp = getActiveApp(cascadeId);
+		const cascadeOffset = activeApp?.cascadeOffset || DEFAULT_CASCADE_OFFSET;
+		const maxCascadeLimit = activeApp?.maxCascade || DEFAULT_MAX_CASCADE;
+		
+		// console.log('cascade', state.stackLength, state.x, state.y, mx, my);
+		if (state.stackLength >= maxCascadeLimit) {
+			resetCascade(cascadeId);
+		} else if (x - state.x + cascadeOffset > mx || y - state.y + cascadeOffset > my) {
+			console.log(state.x, state.y, mx, my);
+			resetCascade(cascadeId);
+		}
+	}
 
-    if (randomize || (cascade && cascadeX == 0 && cascadeY == 0)) {
+	if (randomize || (cascade && cascadeId && getCascadeState(cascadeId).x == 0 && getCascadeState(cascadeId).y == 0)) {
 
-        x += Math.floor(Math.random() * mx);
-        y += Math.floor(Math.random() * my);
+		x += Math.floor(Math.random() * mx);
+		y += Math.floor(Math.random() * my);
 
-        if (cascade) {
-            cascadeX = x;
-            cascadeY = y;
-        }
+		if (cascade && cascadeId) {
+			const state = getCascadeState(cascadeId);
+			state.x = x;
+			state.y = y;
+		}
 
-    } else {
+	} else {
 
-        x = Math.min(x, mx);
-        y = Math.min(y, my);
+		x = Math.min(x, mx);
+		y = Math.min(y, my);
 
-    }
+	}
 
-    if (cascade) {
-
-        x = cascadeX;
-        y = cascadeY;
-        cascadeX += cascadeOffsset;
-        cascadeY += cascadeOffsset;
-        stackLength++;
-    }
+	if (cascade && cascadeId) {
+		const state = getCascadeState(cascadeId);
+		const activeApp = getActiveApp(cascadeId);
+		const cascadeOffset = activeApp?.cascadeOffset || DEFAULT_CASCADE_OFFSET;
+		
+		x = state.x;
+		y = state.y;
+		state.x += cascadeOffset;
+		state.y += cascadeOffset;
+		state.stackLength++;
+	}
 
 
 	win.style.zIndex = maxz++;
@@ -213,6 +340,16 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 	setTimeout(() => {
 		win.classList.remove('animate__' + intro);
 	}, 1000);
+	
+	// Register the window in active instances if appId is provided (or auto-detected)
+	if (appId) {
+		registerActiveApp(appId, win, {
+			x: x,
+			y: y,
+			width: win.style.width,
+			height: win.style.height
+		}, appDefinition);
+	}
 }
 
 function simplebody(text) {
@@ -252,7 +389,9 @@ function randwin() {
 		removeWindow(div);
 	};
 
-	addWindow(div, 0, 0);
+	// Get app definition for randwin and use cascade if enabled
+	const appDef = APP_REGISTRY.appDefinitions.utilities?.randwin || { cascade: true };
+	addWindow(div, 0, 0, 0, 0, true, appDef.cascade, 'randwin', appDef);
 
 	setTimeout(() => {
 		div.classList.remove('animate__' + intro);
@@ -266,6 +405,12 @@ function removeWindow(win, delay = 1000) {
 	}
 	win.classList.add('animate__' + outro);
 	taskbar(win, 'remove');
+	
+	// Unregister from all active apps
+	for (const appId in APP_REGISTRY.activeInstances) {
+		unregisterActiveApp(appId, win);
+	}
+	
 	setTimeout(() => {
 		win.remove();
 	}, delay);
@@ -376,7 +521,9 @@ function maximizeWindow(win) {
 
 // fill the screen with random windows
 function fillRandWin() {
-	umami.track('fillRandWin');
+	if (typeof umami !== 'undefined') {
+		umami.track('fillRandWin');
+	}
 	if (removing) return;
 	const interval = setInterval(() => {
 		randwin();
@@ -678,6 +825,11 @@ function simpleIframe(src, opts = {}) {
 	if (opts.height == undefined) {
 		opts.height = window.innerHeight / 2;
 	}
+	// Enable cascade by default for iframes (can be disabled with cascade: false)
+	if (opts.cascade == undefined) {
+		opts.cascade = true;
+	}
+	
 	var windowbody = document.createElement('div');
 	windowbody.className = 'window-body';
 	var iframe = windowbody.appendChild(document.createElement('iframe'));
@@ -693,6 +845,9 @@ function simpleIframe(src, opts = {}) {
 		canResize: opts.canResize
 	});
 	c.dataset.aniDelay = 1;
+	
+	// Store cascade option as string for consistent retrieval
+	c.dataset.cascade = String(opts.cascade);
 
     // TODO: testing to get title from iframe
     iframe.onload = function() {
@@ -701,6 +856,17 @@ function simpleIframe(src, opts = {}) {
     };
 
 	return c;
+}
+
+/**
+ * Helper function to add an iframe window with proper cascade handling
+ * @param {HTMLElement} iframe - The iframe window element from simpleIframe
+ * @param {number} x - X position (default: 0)
+ * @param {number} y - Y position (default: 0)
+ */
+function addIframeWindow(iframe, x = 0, y = 0) {
+	const useCascade = iframe.dataset.cascade === 'true';
+	addWindow(iframe, x, y, 0, 0, !useCascade, useCascade);
 }
 
 // desktop icons
@@ -761,7 +927,7 @@ addIcon(closeAllIcon);
 
 // recursive window
 addIcon(createIcon(null, 'web98', () => {
-	addWindow(simpleIframe('https://weekoldroadkill.com', { title: 'nahhh', max: false }));
+	addIframeWindow(simpleIframe('https://weekoldroadkill.com', { title: 'nahhh', max: false }));
 }));
 
 // opts: title, width, height
@@ -792,6 +958,241 @@ function simpleImage(src, opts = {}) {
 	});
 
 	return w;
+}
+
+// ==================== STARTUP CONFIGURATION ====================
+// Default startup configuration
+const DEFAULT_STARTUP_CONFIG = {
+	// Profile windows configuration
+	profiles: {
+		enabled: true,
+		count: 10, // Number of each profile window to spawn
+		delay: 100, // Delay in ms between spawning each window
+		cascade: true, // Use cascade layout
+		sequence: [] // Order of profiles to spawn - populated by hardcoded.js
+	},
+	// Utility applications to show on startup
+	utilities: {
+		enabled: true,
+		delay: 2000, // Delay before showing utilities
+		apps: ['randomWindows'] // List of utility apps to show on startup
+	},
+	// Static windows to show on startup
+	staticWindows: {
+		enabled: true,
+		windows: [
+			{
+				type: 'image',
+				src: 'https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'
+			},
+			{
+				type: 'image',
+				src: 'https://camo.githubusercontent.com/65b4f007ed9bd5acc0b0cf783286fed2c564f8799d84e54e54c4d0267eabb004/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67',
+				width: 400,
+				height: 130
+			}
+		]
+	},
+	// Apps to launch on startup (via ?app parameter)
+	directApp: null
+};
+
+/**
+ * Get startup configuration from URL parameters or use default
+ * @returns {Object} Startup configuration
+ */
+function getStartupConfig() {
+	const query = new URLSearchParams(window.location.search);
+	const config = JSON.parse(JSON.stringify(DEFAULT_STARTUP_CONFIG)); // Deep clone
+	
+	// Set default sequence from available profiles if not set
+	if (config.profiles.sequence.length === 0) {
+		config.profiles.sequence = Object.keys(APP_REGISTRY.profiles);
+	}
+	
+	// Handle legacy ?z and ?w parameters - they can now work together
+	let zCount = null;
+	let wCount = null;
+	let hasZ = query.has('z');
+	let hasW = query.has('w');
+	
+	if (hasZ) {
+		zCount = parseInt(query.get('z')) || 3;
+	}
+	if (hasW) {
+		wCount = parseInt(query.get('w')) || 3;
+	}
+	
+	// If either z or w is specified, build custom sequence
+	if (hasZ || hasW) {
+		config.profiles.enabled = true;
+		config.profiles.cascade = false;
+		config.profiles.sequence = [];
+		
+		// Build sequence based on which parameters are present
+		if (hasZ && APP_REGISTRY.profiles.zigzag1001) {
+			config.profiles.sequence.push({
+				id: 'zigzag1001',
+				count: zCount
+			});
+		}
+		if (hasW && APP_REGISTRY.profiles.weekoldroadkill) {
+			config.profiles.sequence.push({
+				id: 'weekoldroadkill',
+				count: wCount
+			});
+		}
+	}
+	// Handle ?no parameter (no profiles)
+	else if (query.has('no')) {
+		config.profiles.enabled = false;
+	}
+	
+	// Handle ?app parameter (launch specific app)
+	if (query.has('app')) {
+		config.directApp = query.get('app');
+	}
+	
+	// Handle new standardized parameters
+	if (query.has('profileCount')) {
+		config.profiles.count = parseInt(query.get('profileCount')) || config.profiles.count;
+	}
+	if (query.has('profileDelay')) {
+		config.profiles.delay = parseInt(query.get('profileDelay')) || config.profiles.delay;
+	}
+	if (query.has('profiles')) {
+		// Comma-separated list of profile IDs
+		const profileList = query.get('profiles').split(',').filter(p => p);
+		if (profileList.length > 0) {
+			config.profiles.sequence = profileList;
+		}
+	}
+	if (query.has('utilities')) {
+		// Comma-separated list of utility IDs
+		const utilityList = query.get('utilities').split(',').filter(u => u);
+		if (utilityList.length > 0) {
+			config.utilities.apps = utilityList;
+		}
+	}
+	if (query.has('noUtilities')) {
+		config.utilities.enabled = false;
+	}
+	if (query.has('noStatic')) {
+		config.staticWindows.enabled = false;
+	}
+	
+	return config;
+}
+
+/**
+ * Execute startup based on configuration
+ * @param {Object} config - Startup configuration
+ */
+function executeStartup(config) {
+	// Show static windows
+	if (config.staticWindows.enabled) {
+		config.staticWindows.windows.forEach(winConfig => {
+			if (winConfig.type === 'image') {
+				addWindow(simpleImage(winConfig.src, {
+					width: winConfig.width,
+					height: winConfig.height
+				}));
+			}
+		});
+	}
+	
+	// Spawn profile windows
+	if (config.profiles.enabled && config.profiles.sequence.length > 0) {
+		let currentProfileIndex = 0;
+		
+		const spawnNextProfile = () => {
+			if (currentProfileIndex >= config.profiles.sequence.length) {
+				return; // All profiles spawned
+			}
+			
+			// Handle both string IDs and objects with {id, count}
+			const seqItem = config.profiles.sequence[currentProfileIndex];
+			const profileId = typeof seqItem === 'string' ? seqItem : seqItem.id;
+			const profileCount = typeof seqItem === 'object' && seqItem.count !== undefined 
+				? seqItem.count 
+				: config.profiles.count;
+			
+			const profile = APP_REGISTRY.profiles[profileId];
+			
+			if (!profile) {
+				console.warn(`Profile ${profileId} not found in APP_REGISTRY`);
+				currentProfileIndex++;
+				spawnNextProfile();
+				return;
+			}
+			
+			let currentCount = 0;
+			const interval = setInterval(() => {
+				profile.handler(config.profiles.cascade, profileId);
+				currentCount++;
+				
+				if (currentCount >= profileCount) {
+					clearInterval(interval);
+					currentProfileIndex++;
+					
+					// Reset cascade and spawn next profile if available
+					if (currentProfileIndex < config.profiles.sequence.length) {
+						resetCascade(profileId);
+						// Small delay before starting next profile
+						setTimeout(spawnNextProfile, 100);
+					}
+				}
+			}, config.profiles.delay);
+		};
+		
+		spawnNextProfile();
+	}
+	
+	// Show utility applications
+	if (config.utilities.enabled && config.utilities.apps.length > 0) {
+		setTimeout(() => {
+			config.utilities.apps.forEach(utilityId => {
+				const utility = APP_REGISTRY.utilities[utilityId];
+				if (utility && utility.handler) {
+					utility.handler();
+				} else {
+					console.warn(`Utility ${utilityId} not found in APP_REGISTRY`);
+				}
+			});
+		}, config.utilities.delay);
+	}
+	
+	// Launch direct app if specified
+	if (config.directApp) {
+		// Check if it's a direct app reference
+		if (APP_REGISTRY.apps && APP_REGISTRY.apps[config.directApp]) {
+			APP_REGISTRY.apps[config.directApp].handler();
+		} else {
+			// Try to find it in projects across all profiles
+			let foundProject = null;
+			for (const profileId in APP_REGISTRY.profiles) {
+				const profile = APP_REGISTRY.profiles[profileId];
+				if (profile.projects) {
+					foundProject = profile.projects.find(p => 
+						p.buttonText.toLowerCase().replace(/\s+/g, '') === config.directApp.toLowerCase()
+					);
+					if (foundProject) break;
+				}
+			}
+			
+			if (foundProject) {
+				// Dynamically create iframe from project
+				addIframeWindow(simpleIframe(foundProject.siteUrl, {
+					title: foundProject.buttonText,
+					max: true,
+					width: foundProject.width || 1044,
+					height: foundProject.height || 612
+				}));
+			} else {
+				console.warn(`App ${config.directApp} not found`);
+			}
+		}
+	}
 }
 
 function doClock(clockdiv) {
