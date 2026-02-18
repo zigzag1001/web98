@@ -140,363 +140,147 @@ const windowSize = {
 	width: 1044
 };
 
-// ==================== APP REGISTRY ====================
-// Central registry for all available applications
-const APP_REGISTRY = {
-	// Profile applications
-	profiles: {
-		weekoldroadkill: {
-			id: 'weekoldroadkill',
-			name: 'weekOldRoadkill',
-			icon: null, // Will be set dynamically
-			handler: weekoldroadkill,
-			projects: [
-				{
-					buttonText: 'Base Converter',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/base-converter',
-					siteUrl: WURL + '/base-converter/',
-					width: 271,
-					height: 347,
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Screaming Insects',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/screaming-insects',
-					siteUrl: WURL + '/screaming-insects/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Traveling Salesman',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/traveling-salesman',
-					siteUrl: WURL + '/traveling-salesman/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Inverse Kinematics',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/inverse-kinematics',
-					siteUrl: WURL + '/inverse-kinematics/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Sorting',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/sorting',
-					siteUrl: WURL + '/sorting/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Boids',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/boids',
-					siteUrl: WURL + '/boids/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Verlet',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/verlet',
-					siteUrl: WURL + '/verlet/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Perlin',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/perlin',
-					siteUrl: WURL + '/perlin/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Drones',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/drones',
-					siteUrl: WURL + '/drones/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Programmable Drones',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/programmable-drones',
-					siteUrl: WURL + '/programmable-drones/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Pixel Art Anti Aliasing',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/bevy_pixel_art',
-					siteUrl: WURL + '/bevy_pixel_art/',
-					icon: 'gears-0.png',
-				},
-				{
-					buttonText: 'Web XP',
-					sourceUrl: 'https://gitlab.com/weekOldRoadkill/web_xp',
-					siteUrl: WURL + '/web_xp/',
-					icon: 'gears-0.png',
-				}
-			],
-			profileData: {
-				title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill',
-				img: 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800',
-				defaultIcon: 'gears-0.png',
-				sourceLink: 'https://gitlab.com/weekOldRoadkill',
-				sourceText: 'GitLab'
-			}
+// ==================== PROFILE DATA ====================
+// Add weekoldroadkill profile to APP_REGISTRY
+APP_REGISTRY.profiles.weekoldroadkill = {
+	id: 'weekoldroadkill',
+	name: 'weekOldRoadkill',
+	icon: null, // Will be set dynamically
+	handler: weekoldroadkill,
+	projects: [
+		{
+			buttonText: 'Base Converter',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/base-converter',
+			siteUrl: WURL + '/base-converter/',
+			width: 271,
+			height: 347,
+			icon: 'gears-0.png',
 		},
-		zigzag1001: {
-			id: 'zigzag1001',
-			name: 'zigzag1001',
-			icon: null, // Will be set dynamically
-			handler: zigzag1001,
-			projects: [
-				{
-					buttonText: 'Pixel Wind',
-					sourceUrl: 'https://github.com/zigzag1001/pixelWind/tree/wasm',
-					siteUrl: ZURL + '/pixelWind/',
-					icon: 'defragment-0.png',
-				},
-				{
-					buttonText: 'web98',
-					sourceUrl: 'https://github.com/zigzag1001/web98',
-					siteUrl: ZURL + '/web98/',
-					icon: 'defragment-0.png',
-				},
-				{
-					buttonText: 'Pixel Sort',
-					sourceUrl: 'https://github.com/zigzag1001/pixel-sort-rs',
-					siteUrl: ZURL + '/pixel-sort-rs/',
-					icon: 'defragment-0.png',
-				}
-			],
-			profileData: {
-				title: '👑\xa0\xa0\xa0\xa0zigzag1001',
-				img: './img/pfp.gif',
-				defaultIcon: 'defragment-0.png',
-				sourceLink: 'https://github.com/zigzag1001',
-				sourceText: 'GitHub'
-			}
-		}
-	},
-	// Utility applications
-	utilities: {
-		randomWindows: {
-			id: 'randomWindows',
-			name: 'Random Windows',
-			icon: 'msg_warning-0.png',
-			handler: randomWinodws
+		{
+			buttonText: 'Screaming Insects',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/screaming-insects',
+			siteUrl: WURL + '/screaming-insects/',
+			icon: 'gears-0.png',
 		},
-		customWindow: {
-			id: 'customWindow',
-			name: 'Custom Window',
-			icon: 'internet_connection_wiz-4.png',
-			handler: customWin
-		}
-	},
-	// Direct project applications (for ?app parameter)
-	apps: {
-		pixelwind: {
-			id: 'pixelwind',
-			name: 'Pixel Wind',
-			handler: () => {
-				addWindow(simpleIframe(ZURL + '/pixelWind/', {
-					title: 'Pixel Wind',
-					max: true,
-					width: windowSize.width,
-					height: windowSize.height
-				}));
-			}
+		{
+			buttonText: 'Traveling Salesman',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/traveling-salesman',
+			siteUrl: WURL + '/traveling-salesman/',
+			icon: 'gears-0.png',
 		},
-		pixelsort: {
-			id: 'pixelsort',
-			name: 'Pixel Sort',
-			handler: () => {
-				addWindow(simpleIframe(ZURL + '/pixel-sort-rs/', {
-					title: 'Pixel Sort',
-					max: true,
-					width: windowSize.width,
-					height: windowSize.height
-				}));
-			}
+		{
+			buttonText: 'Inverse Kinematics',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/inverse-kinematics',
+			siteUrl: WURL + '/inverse-kinematics/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Sorting',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/sorting',
+			siteUrl: WURL + '/sorting/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Boids',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/boids',
+			siteUrl: WURL + '/boids/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Verlet',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/verlet',
+			siteUrl: WURL + '/verlet/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Perlin',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/perlin',
+			siteUrl: WURL + '/perlin/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Drones',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/drones',
+			siteUrl: WURL + '/drones/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Programmable Drones',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/programmable-drones',
+			siteUrl: WURL + '/programmable-drones/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Pixel Art Anti Aliasing',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/bevy_pixel_art',
+			siteUrl: WURL + '/bevy_pixel_art/',
+			icon: 'gears-0.png',
+		},
+		{
+			buttonText: 'Web XP',
+			sourceUrl: 'https://gitlab.com/weekOldRoadkill/web_xp',
+			siteUrl: WURL + '/web_xp/',
+			icon: 'gears-0.png',
 		}
+	],
+	profileData: {
+		title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill',
+		img: 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800',
+		defaultIcon: 'gears-0.png',
+		sourceLink: 'https://gitlab.com/weekOldRoadkill',
+		sourceText: 'GitLab'
 	}
 };
 
-// ==================== STARTUP CONFIGURATION ====================
-// Default startup configuration
-const DEFAULT_STARTUP_CONFIG = {
-	// Profile windows configuration
-	profiles: {
-		enabled: true,
-		count: 10, // Number of each profile window to spawn
-		delay: 100, // Delay in ms between spawning each window
-		cascade: true, // Use cascade layout
-		sequence: ['zigzag1001', 'weekoldroadkill'] // Order of profiles to spawn
-	},
-	// Utility applications to show on startup
-	utilities: {
-		enabled: true,
-		delay: 2000, // Delay before showing utilities
-		apps: ['randomWindows'] // List of utility apps to show on startup
-	},
-	// Static windows to show on startup
-	staticWindows: {
-		enabled: true,
-		windows: [
-			{
-				type: 'image',
-				src: 'https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'
-			},
-			{
-				type: 'image',
-				src: 'https://camo.githubusercontent.com/65b4f007ed9bd5acc0b0cf783286fed2c564f8799d84e54e54c4d0267eabb004/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67',
-				width: 400,
-				height: 130
-			}
-		]
-	},
-	// Apps to launch on startup (via ?app parameter)
-	directApp: null
+// Add zigzag1001 profile to APP_REGISTRY
+APP_REGISTRY.profiles.zigzag1001 = {
+	id: 'zigzag1001',
+	name: 'zigzag1001',
+	icon: null, // Will be set dynamically
+	handler: zigzag1001,
+	projects: [
+		{
+			buttonText: 'Pixel Wind',
+			sourceUrl: 'https://github.com/zigzag1001/pixelWind/tree/wasm',
+			siteUrl: ZURL + '/pixelWind/',
+			icon: 'defragment-0.png',
+		},
+		{
+			buttonText: 'web98',
+			sourceUrl: 'https://github.com/zigzag1001/web98',
+			siteUrl: ZURL + '/web98/',
+			icon: 'defragment-0.png',
+		},
+		{
+			buttonText: 'Pixel Sort',
+			sourceUrl: 'https://github.com/zigzag1001/pixel-sort-rs',
+			siteUrl: ZURL + '/pixel-sort-rs/',
+			icon: 'defragment-0.png',
+		}
+	],
+	profileData: {
+		title: '👑\xa0\xa0\xa0\xa0zigzag1001',
+		img: './img/pfp.gif',
+		defaultIcon: 'defragment-0.png',
+		sourceLink: 'https://github.com/zigzag1001',
+		sourceText: 'GitHub'
+	}
 };
 
-/**
- * Get startup configuration from URL parameters or use default
- * @returns {Object} Startup configuration
- */
-function getStartupConfig() {
-	const query = new URLSearchParams(window.location.search);
-	const config = JSON.parse(JSON.stringify(DEFAULT_STARTUP_CONFIG)); // Deep clone
-	
-	// Handle legacy ?z parameter (zigzag1001 only)
-	if (query.has('z')) {
-		const count = parseInt(query.get('z')) || 3;
-		config.profiles.enabled = true;
-		config.profiles.count = count;
-		config.profiles.cascade = false;
-		config.profiles.sequence = ['zigzag1001'];
-	}
-	// Handle legacy ?w parameter (weekoldroadkill only)
-	else if (query.has('w')) {
-		const count = parseInt(query.get('w')) || 3;
-		config.profiles.enabled = true;
-		config.profiles.count = count;
-		config.profiles.cascade = false;
-		config.profiles.sequence = ['weekoldroadkill'];
-	}
-	// Handle ?no parameter (no profiles)
-	else if (query.has('no')) {
-		config.profiles.enabled = false;
-	}
-	
-	// Handle ?app parameter (launch specific app)
-	if (query.has('app')) {
-		config.directApp = query.get('app');
-	}
-	
-	// Handle new standardized parameters
-	if (query.has('profileCount')) {
-		config.profiles.count = parseInt(query.get('profileCount')) || config.profiles.count;
-	}
-	if (query.has('profileDelay')) {
-		config.profiles.delay = parseInt(query.get('profileDelay')) || config.profiles.delay;
-	}
-	if (query.has('profiles')) {
-		// Comma-separated list of profile IDs
-		const profileList = query.get('profiles').split(',').filter(p => p);
-		if (profileList.length > 0) {
-			config.profiles.sequence = profileList;
-		}
-	}
-	if (query.has('utilities')) {
-		// Comma-separated list of utility IDs
-		const utilityList = query.get('utilities').split(',').filter(u => u);
-		if (utilityList.length > 0) {
-			config.utilities.apps = utilityList;
-		}
-	}
-	if (query.has('noUtilities')) {
-		config.utilities.enabled = false;
-	}
-	if (query.has('noStatic')) {
-		config.staticWindows.enabled = false;
-	}
-	
-	return config;
-}
+// Add utility applications to APP_REGISTRY
+APP_REGISTRY.utilities.randomWindows = {
+	id: 'randomWindows',
+	name: 'Random Windows',
+	icon: 'msg_warning-0.png',
+	handler: randomWinodws
+};
 
-/**
- * Execute startup based on configuration
- * @param {Object} config - Startup configuration
- */
-function executeStartup(config) {
-	// Show static windows
-	if (config.staticWindows.enabled) {
-		config.staticWindows.windows.forEach(winConfig => {
-			if (winConfig.type === 'image') {
-				addWindow(simpleImage(winConfig.src, {
-					width: winConfig.width,
-					height: winConfig.height
-				}));
-			}
-		});
-	}
-	
-	// Spawn profile windows
-	if (config.profiles.enabled && config.profiles.sequence.length > 0) {
-		let currentProfileIndex = 0;
-		let currentCount = 0;
-		
-		const spawnNextProfile = () => {
-			if (currentProfileIndex >= config.profiles.sequence.length) {
-				return; // All profiles spawned
-			}
-			
-			const profileId = config.profiles.sequence[currentProfileIndex];
-			const profile = APP_REGISTRY.profiles[profileId];
-			
-			if (!profile) {
-				console.warn(`Profile ${profileId} not found in APP_REGISTRY`);
-				currentProfileIndex++;
-				spawnNextProfile();
-				return;
-			}
-			
-			currentCount = 0;
-			const interval = setInterval(() => {
-				profile.handler(config.profiles.cascade);
-				currentCount++;
-				
-				if (currentCount >= config.profiles.count) {
-					clearInterval(interval);
-					currentProfileIndex++;
-					
-					// Reset cascade and spawn next profile if available
-					if (currentProfileIndex < config.profiles.sequence.length) {
-						resetCascade();
-						// Small delay before starting next profile
-						setTimeout(spawnNextProfile, 100);
-					}
-				}
-			}, config.profiles.delay);
-		};
-		
-		spawnNextProfile();
-	}
-	
-	// Show utility applications
-	if (config.utilities.enabled && config.utilities.apps.length > 0) {
-		setTimeout(() => {
-			config.utilities.apps.forEach(utilityId => {
-				const utility = APP_REGISTRY.utilities[utilityId];
-				if (utility && utility.handler) {
-					utility.handler();
-				} else {
-					console.warn(`Utility ${utilityId} not found in APP_REGISTRY`);
-				}
-			});
-		}, config.utilities.delay);
-	}
-	
-	// Launch direct app if specified
-	if (config.directApp) {
-		const app = APP_REGISTRY.apps[config.directApp];
-		if (app && app.handler) {
-			app.handler();
-		} else {
-			console.warn(`App ${config.directApp} not found in APP_REGISTRY`);
-		}
-	}
-}
+APP_REGISTRY.utilities.customWindow = {
+	id: 'customWindow',
+	name: 'Custom Window',
+	icon: 'internet_connection_wiz-4.png',
+	handler: customWin
+};
 
 /**
  * Create a profile window from a JSON object.
@@ -514,7 +298,7 @@ function executeStartup(config) {
  * @param {boolean} [halfpage=true] - Whether to use halfpage layout.
  * @param {string} [side='left'] - Side for halfpage layout ('left' or 'right').
  */
-function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
+function createProfileFromJson(profileJson, halfpage = true, side = 'left', profileId = null) {
 
     // count number of windows with dataset tag profileJson.title
     var count = 0;
@@ -613,27 +397,27 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
     if (halfpage) {
         var mx = window.innerWidth / 2;
         var x = (side === "right") ? mx : 0;
-        addWindow(custom, x, 0, mx, 0, false, true);
+        addWindow(custom, x, 0, mx, 0, false, true, profileId);
     } else {
-        addWindow(custom);
+        addWindow(custom, 0, 0, 0, 0, true, false, profileId);
     }
 }
 
-function weekoldroadkill(halfpage = true, side = 'left') {
+function weekoldroadkill(halfpage = true, side = 'left', profileId = 'weekoldroadkill') {
     const profile = APP_REGISTRY.profiles.weekoldroadkill;
     createProfileFromJson({
         ...profile.profileData,
         rows: profile.projects
-    }, halfpage, side);
+    }, halfpage, side, profileId);
 }
 
 
-function zigzag1001(halfpage = true, side = 'right') {
+function zigzag1001(halfpage = true, side = 'right', profileId = 'zigzag1001') {
     const profile = APP_REGISTRY.profiles.zigzag1001;
     createProfileFromJson({
         ...profile.profileData,
         rows: profile.projects
-    }, halfpage, side);
+    }, halfpage, side, profileId);
 }
 
 

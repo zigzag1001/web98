@@ -130,19 +130,40 @@ function createWindow(opts = {}) {
 }
 
 
-var cascadeX = 0;
-var cascadeY = 0;
-var stackLength = 0;
 const cascadeOffsset = 15;
 const maxCascade = 4;
 
-function resetCascade() {
-    stackLength = 0;
-    cascadeX = 0;
-    cascadeY = 0;
+// ==================== APP REGISTRY ====================
+// Central registry for all available applications
+const APP_REGISTRY = {
+	// Profile applications - populated by hardcoded.js
+	profiles: {},
+	// Utility applications
+	utilities: {},
+	// Cascade state for each profile
+	cascadeState: {}
+};
+
+// Reset cascade for a specific profile
+function resetCascade(profileId) {
+	if (profileId) {
+		APP_REGISTRY.cascadeState[profileId] = {
+			x: 0,
+			y: 0,
+			stackLength: 0
+		};
+	}
 }
 
-function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade = false) {
+// Get cascade state for a profile (creates if doesn't exist)
+function getCascadeState(profileId) {
+	if (!APP_REGISTRY.cascadeState[profileId]) {
+		resetCascade(profileId);
+	}
+	return APP_REGISTRY.cascadeState[profileId];
+}
+
+function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade = false, profileId = null) {
 
 	taskbar(win, 'add');
 
@@ -165,41 +186,43 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 		my = 0;
 	}
 
-    if (cascade) {
-        // console.log('cascade', stackLength, cascadeX, cascadeY, mx, my);
-        if (stackLength >= maxCascade) {
-            resetCascade();
-        } else if (x - cascadeX + cascadeOffsset > mx || y - cascadeY + cascadeOffsset > my) {
-            console.log(cascadeX, cascadeY, mx, my);
-            resetCascade();
-        }
-    }
+	if (cascade && profileId) {
+		const state = getCascadeState(profileId);
+		// console.log('cascade', state.stackLength, state.x, state.y, mx, my);
+		if (state.stackLength >= maxCascade) {
+			resetCascade(profileId);
+		} else if (x - state.x + cascadeOffsset > mx || y - state.y + cascadeOffsset > my) {
+			console.log(state.x, state.y, mx, my);
+			resetCascade(profileId);
+		}
+	}
 
-    if (randomize || (cascade && cascadeX == 0 && cascadeY == 0)) {
+	if (randomize || (cascade && profileId && getCascadeState(profileId).x == 0 && getCascadeState(profileId).y == 0)) {
 
-        x += Math.floor(Math.random() * mx);
-        y += Math.floor(Math.random() * my);
+		x += Math.floor(Math.random() * mx);
+		y += Math.floor(Math.random() * my);
 
-        if (cascade) {
-            cascadeX = x;
-            cascadeY = y;
-        }
+		if (cascade && profileId) {
+			const state = getCascadeState(profileId);
+			state.x = x;
+			state.y = y;
+		}
 
-    } else {
+	} else {
 
-        x = Math.min(x, mx);
-        y = Math.min(y, my);
+		x = Math.min(x, mx);
+		y = Math.min(y, my);
 
-    }
+	}
 
-    if (cascade) {
-
-        x = cascadeX;
-        y = cascadeY;
-        cascadeX += cascadeOffsset;
-        cascadeY += cascadeOffsset;
-        stackLength++;
-    }
+	if (cascade && profileId) {
+		const state = getCascadeState(profileId);
+		x = state.x;
+		y = state.y;
+		state.x += cascadeOffsset;
+		state.y += cascadeOffsset;
+		state.stackLength++;
+	}
 
 
 	win.style.zIndex = maxz++;
@@ -792,6 +815,241 @@ function simpleImage(src, opts = {}) {
 	});
 
 	return w;
+}
+
+// ==================== STARTUP CONFIGURATION ====================
+// Default startup configuration
+const DEFAULT_STARTUP_CONFIG = {
+	// Profile windows configuration
+	profiles: {
+		enabled: true,
+		count: 10, // Number of each profile window to spawn
+		delay: 100, // Delay in ms between spawning each window
+		cascade: true, // Use cascade layout
+		sequence: [] // Order of profiles to spawn - populated by hardcoded.js
+	},
+	// Utility applications to show on startup
+	utilities: {
+		enabled: true,
+		delay: 2000, // Delay before showing utilities
+		apps: ['randomWindows'] // List of utility apps to show on startup
+	},
+	// Static windows to show on startup
+	staticWindows: {
+		enabled: true,
+		windows: [
+			{
+				type: 'image',
+				src: 'https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'
+			},
+			{
+				type: 'image',
+				src: 'https://camo.githubusercontent.com/65b4f007ed9bd5acc0b0cf783286fed2c564f8799d84e54e54c4d0267eabb004/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67',
+				width: 400,
+				height: 130
+			}
+		]
+	},
+	// Apps to launch on startup (via ?app parameter)
+	directApp: null
+};
+
+/**
+ * Get startup configuration from URL parameters or use default
+ * @returns {Object} Startup configuration
+ */
+function getStartupConfig() {
+	const query = new URLSearchParams(window.location.search);
+	const config = JSON.parse(JSON.stringify(DEFAULT_STARTUP_CONFIG)); // Deep clone
+	
+	// Set default sequence from available profiles if not set
+	if (config.profiles.sequence.length === 0) {
+		config.profiles.sequence = Object.keys(APP_REGISTRY.profiles);
+	}
+	
+	// Handle legacy ?z and ?w parameters - they can now work together
+	let zCount = null;
+	let wCount = null;
+	let hasZ = query.has('z');
+	let hasW = query.has('w');
+	
+	if (hasZ) {
+		zCount = parseInt(query.get('z')) || 3;
+	}
+	if (hasW) {
+		wCount = parseInt(query.get('w')) || 3;
+	}
+	
+	// If either z or w is specified, build custom sequence
+	if (hasZ || hasW) {
+		config.profiles.enabled = true;
+		config.profiles.cascade = false;
+		config.profiles.sequence = [];
+		
+		// Build sequence based on which parameters are present
+		if (hasZ && APP_REGISTRY.profiles.zigzag1001) {
+			config.profiles.sequence.push({
+				id: 'zigzag1001',
+				count: zCount
+			});
+		}
+		if (hasW && APP_REGISTRY.profiles.weekoldroadkill) {
+			config.profiles.sequence.push({
+				id: 'weekoldroadkill',
+				count: wCount
+			});
+		}
+	}
+	// Handle ?no parameter (no profiles)
+	else if (query.has('no')) {
+		config.profiles.enabled = false;
+	}
+	
+	// Handle ?app parameter (launch specific app)
+	if (query.has('app')) {
+		config.directApp = query.get('app');
+	}
+	
+	// Handle new standardized parameters
+	if (query.has('profileCount')) {
+		config.profiles.count = parseInt(query.get('profileCount')) || config.profiles.count;
+	}
+	if (query.has('profileDelay')) {
+		config.profiles.delay = parseInt(query.get('profileDelay')) || config.profiles.delay;
+	}
+	if (query.has('profiles')) {
+		// Comma-separated list of profile IDs
+		const profileList = query.get('profiles').split(',').filter(p => p);
+		if (profileList.length > 0) {
+			config.profiles.sequence = profileList;
+		}
+	}
+	if (query.has('utilities')) {
+		// Comma-separated list of utility IDs
+		const utilityList = query.get('utilities').split(',').filter(u => u);
+		if (utilityList.length > 0) {
+			config.utilities.apps = utilityList;
+		}
+	}
+	if (query.has('noUtilities')) {
+		config.utilities.enabled = false;
+	}
+	if (query.has('noStatic')) {
+		config.staticWindows.enabled = false;
+	}
+	
+	return config;
+}
+
+/**
+ * Execute startup based on configuration
+ * @param {Object} config - Startup configuration
+ */
+function executeStartup(config) {
+	// Show static windows
+	if (config.staticWindows.enabled) {
+		config.staticWindows.windows.forEach(winConfig => {
+			if (winConfig.type === 'image') {
+				addWindow(simpleImage(winConfig.src, {
+					width: winConfig.width,
+					height: winConfig.height
+				}));
+			}
+		});
+	}
+	
+	// Spawn profile windows
+	if (config.profiles.enabled && config.profiles.sequence.length > 0) {
+		let currentProfileIndex = 0;
+		
+		const spawnNextProfile = () => {
+			if (currentProfileIndex >= config.profiles.sequence.length) {
+				return; // All profiles spawned
+			}
+			
+			// Handle both string IDs and objects with {id, count}
+			const seqItem = config.profiles.sequence[currentProfileIndex];
+			const profileId = typeof seqItem === 'string' ? seqItem : seqItem.id;
+			const profileCount = typeof seqItem === 'object' && seqItem.count !== undefined 
+				? seqItem.count 
+				: config.profiles.count;
+			
+			const profile = APP_REGISTRY.profiles[profileId];
+			
+			if (!profile) {
+				console.warn(`Profile ${profileId} not found in APP_REGISTRY`);
+				currentProfileIndex++;
+				spawnNextProfile();
+				return;
+			}
+			
+			let currentCount = 0;
+			const interval = setInterval(() => {
+				profile.handler(config.profiles.cascade, profileId);
+				currentCount++;
+				
+				if (currentCount >= profileCount) {
+					clearInterval(interval);
+					currentProfileIndex++;
+					
+					// Reset cascade and spawn next profile if available
+					if (currentProfileIndex < config.profiles.sequence.length) {
+						resetCascade(profileId);
+						// Small delay before starting next profile
+						setTimeout(spawnNextProfile, 100);
+					}
+				}
+			}, config.profiles.delay);
+		};
+		
+		spawnNextProfile();
+	}
+	
+	// Show utility applications
+	if (config.utilities.enabled && config.utilities.apps.length > 0) {
+		setTimeout(() => {
+			config.utilities.apps.forEach(utilityId => {
+				const utility = APP_REGISTRY.utilities[utilityId];
+				if (utility && utility.handler) {
+					utility.handler();
+				} else {
+					console.warn(`Utility ${utilityId} not found in APP_REGISTRY`);
+				}
+			});
+		}, config.utilities.delay);
+	}
+	
+	// Launch direct app if specified
+	if (config.directApp) {
+		// Check if it's a direct app reference
+		if (APP_REGISTRY.apps && APP_REGISTRY.apps[config.directApp]) {
+			APP_REGISTRY.apps[config.directApp].handler();
+		} else {
+			// Try to find it in projects across all profiles
+			let foundProject = null;
+			for (const profileId in APP_REGISTRY.profiles) {
+				const profile = APP_REGISTRY.profiles[profileId];
+				if (profile.projects) {
+					foundProject = profile.projects.find(p => 
+						p.buttonText.toLowerCase().replace(/\s+/g, '') === config.directApp.toLowerCase()
+					);
+					if (foundProject) break;
+				}
+			}
+			
+			if (foundProject) {
+				// Dynamically create iframe from project
+				addWindow(simpleIframe(foundProject.siteUrl, {
+					title: foundProject.buttonText,
+					max: true,
+					width: foundProject.width || 1044,
+					height: foundProject.height || 612
+				}));
+			} else {
+				console.warn(`App ${config.directApp} not found`);
+			}
+		}
+	}
 }
 
 function doClock(clockdiv) {
