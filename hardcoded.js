@@ -8,6 +8,8 @@ APP_REGISTRY.appDefinitions.utilities.randomWindows = {
 	type: 'utility',
 	icon: 'msg_warning-0.png',
 	cascade: true,  // Enable cascade by default
+	cascadeOffset: 15,  // Custom cascade offset
+	maxCascade: 4,  // Custom max cascade stack
 	width: 250,
 	height: 200,
 	handler: randomWinodws
@@ -29,6 +31,8 @@ APP_REGISTRY.appDefinitions.utilities.randwin = {
 	name: 'Random Window',
 	type: 'utility',
 	cascade: true,  // Individual random windows can cascade
+	cascadeOffset: 15,  // Custom cascade offset
+	maxCascade: 4,  // Custom max cascade stack
 	width: 250,
 	height: 200
 };
@@ -364,7 +368,7 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left', prof
     for (let i = 0; i < rows.length; i++) {
         // iframeCreate function instead of iframeCallback
         let iframeCreate = () => {
-            addWindow(simpleIframe(
+            const iframe = simpleIframe(
                 rows[i].siteUrl,
                 opts = {
                     title: rows[i].buttonText,
@@ -372,10 +376,11 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left', prof
                     canResize: rows[i].canResize,
                     width: rows[i].width || windowSize.width,
                     height: rows[i].height || windowSize.height
-                },
-                rows[i].x || 0,
-                rows[i].y || 0
-            ));
+                }
+            );
+            // Use cascade from iframe dataset if available
+            const useCascade = iframe.dataset.cascade === 'true';
+            addWindow(iframe, rows[i].x || 0, rows[i].y || 0, 0, 0, !useCascade, useCascade);
         }
 
         if (count == 0) {

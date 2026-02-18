@@ -130,8 +130,9 @@ function createWindow(opts = {}) {
 }
 
 
-const cascadeOffsset = 15;
-const maxCascade = 4;
+// Default cascade settings (can be overridden per-app)
+const DEFAULT_CASCADE_OFFSET = 15;
+const DEFAULT_MAX_CASCADE = 4;
 
 // ==================== APP REGISTRY ====================
 // Central registry for all applications
@@ -143,7 +144,7 @@ const APP_REGISTRY = {
 		projects: {}       // Individual project apps
 	},
 	// Active instances - currently open windows/apps with their state
-	activeInstances: {}   // Format: {appId: {id, cascadeState, wins: [{div, metadata}]}}
+	activeInstances: {}   // Format: {appId: {id, cascadeState, cascadeOffset, maxCascade, wins: [{div, metadata}]}}
 };
 
 // Backwards compatibility aliases
@@ -168,6 +169,9 @@ function registerActiveApp(appId, div, metadata = {}, appDefinition = {}) {
 		APP_REGISTRY.activeInstances[appId] = {
 			id: appId,
 			definition: appDefinition,
+			// Per-app cascade settings with defaults
+			cascadeOffset: appDefinition.cascadeOffset !== undefined ? appDefinition.cascadeOffset : DEFAULT_CASCADE_OFFSET,
+			maxCascade: appDefinition.maxCascade !== undefined ? appDefinition.maxCascade : DEFAULT_MAX_CASCADE,
 			cascadeState: {
 				enabled: appDefinition.cascade !== false, // Default to true unless explicitly disabled
 				x: 0,
@@ -267,15 +271,28 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 		my = 0;
 	}
 
+	// Auto-detect appId from window title if not provided
+	if (!appId) {
+		const titleElement = win.querySelector('.title-bar-text');
+		if (titleElement && titleElement.textContent) {
+			// Use title as appId, sanitized for use as ID
+			appId = titleElement.textContent.trim();
+		}
+	}
+	
 	// Use appId for cascade tracking (backward compatible with profileId)
 	const cascadeId = appId;
 	
 	if (cascade && cascadeId) {
 		const state = getCascadeState(cascadeId);
+		const activeApp = getActiveApp(cascadeId);
+		const cascadeOffset = activeApp?.cascadeOffset || DEFAULT_CASCADE_OFFSET;
+		const maxCascadeLimit = activeApp?.maxCascade || DEFAULT_MAX_CASCADE;
+		
 		// console.log('cascade', state.stackLength, state.x, state.y, mx, my);
-		if (state.stackLength >= maxCascade) {
+		if (state.stackLength >= maxCascadeLimit) {
 			resetCascade(cascadeId);
-		} else if (x - state.x + cascadeOffsset > mx || y - state.y + cascadeOffsset > my) {
+		} else if (x - state.x + cascadeOffset > mx || y - state.y + cascadeOffset > my) {
 			console.log(state.x, state.y, mx, my);
 			resetCascade(cascadeId);
 		}
@@ -301,10 +318,13 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 
 	if (cascade && cascadeId) {
 		const state = getCascadeState(cascadeId);
+		const activeApp = getActiveApp(cascadeId);
+		const cascadeOffset = activeApp?.cascadeOffset || DEFAULT_CASCADE_OFFSET;
+		
 		x = state.x;
 		y = state.y;
-		state.x += cascadeOffsset;
-		state.y += cascadeOffsset;
+		state.x += cascadeOffset;
+		state.y += cascadeOffset;
 		state.stackLength++;
 	}
 
@@ -321,7 +341,7 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 		win.classList.remove('animate__' + intro);
 	}, 1000);
 	
-	// Register the window in active instances if appId is provided
+	// Register the window in active instances if appId is provided (or auto-detected)
 	if (appId) {
 		registerActiveApp(appId, win, {
 			x: x,
@@ -805,6 +825,11 @@ function simpleIframe(src, opts = {}) {
 	if (opts.height == undefined) {
 		opts.height = window.innerHeight / 2;
 	}
+	// Enable cascade by default for iframes (can be disabled with cascade: false)
+	if (opts.cascade == undefined) {
+		opts.cascade = true;
+	}
+	
 	var windowbody = document.createElement('div');
 	windowbody.className = 'window-body';
 	var iframe = windowbody.appendChild(document.createElement('iframe'));
@@ -820,6 +845,9 @@ function simpleIframe(src, opts = {}) {
 		canResize: opts.canResize
 	});
 	c.dataset.aniDelay = 1;
+	
+	// Store cascade option for use with addWindow
+	c.dataset.cascade = opts.cascade;
 
     // TODO: testing to get title from iframe
     iframe.onload = function() {
@@ -888,7 +916,9 @@ addIcon(closeAllIcon);
 
 // recursive window
 addIcon(createIcon(null, 'web98', () => {
-	addWindow(simpleIframe('https://weekoldroadkill.com', { title: 'nahhh', max: false }));
+	const iframe = simpleIframe('https://weekoldroadkill.com', { title: 'nahhh', max: false });
+	const useCascade = iframe.dataset.cascade === 'true';
+	addWindow(iframe, 0, 0, 0, 0, !useCascade, useCascade);
 }));
 
 // opts: title, width, height
@@ -1143,12 +1173,14 @@ function executeStartup(config) {
 			
 			if (foundProject) {
 				// Dynamically create iframe from project
-				addWindow(simpleIframe(foundProject.siteUrl, {
+				const iframe = simpleIframe(foundProject.siteUrl, {
 					title: foundProject.buttonText,
 					max: true,
 					width: foundProject.width || 1044,
 					height: foundProject.height || 612
-				}));
+				});
+				const useCascade = iframe.dataset.cascade === 'true';
+				addWindow(iframe, 0, 0, 0, 0, !useCascade, useCascade);
 			} else {
 				console.warn(`App ${config.directApp} not found`);
 			}
