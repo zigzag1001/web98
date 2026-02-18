@@ -2,15 +2,27 @@
 
 ## Overview
 
-The App Registry is a centralized system for managing all applications, profiles, and their startup behavior in web98. It replaces the hardcoded initialization logic with a data-driven approach.
+The App Registry is a centralized system for managing all applications, profiles, and their startup behavior in web98. It is now located in **script.js** as core functionality, while profile-specific data is populated from **hardcoded.js**.
+
+## Architecture
+
+### script.js (Core Framework)
+- Defines APP_REGISTRY structure with profiles, utilities, and cascadeState
+- Implements cascade tracking per profile for independent positioning
+- Contains startup configuration functions (getStartupConfig, executeStartup)
+- Provides framework functionality that any profile can use
+
+### hardcoded.js (Profile Data)
+- Populates APP_REGISTRY.profiles with weekoldroadkill and zigzag1001 data
+- Contains project lists for each profile
+- Adds utility applications to APP_REGISTRY.utilities
+- Implements profile-specific handler functions
 
 ## App Registry Structure
 
-The `APP_REGISTRY` object contains three main sections:
+The `APP_REGISTRY` object (in script.js) contains:
 
 ### 1. Profiles
-
-Profile applications that contain project lists and metadata:
 
 ```javascript
 APP_REGISTRY.profiles = {
@@ -39,8 +51,6 @@ APP_REGISTRY.profiles = {
 
 ### 2. Utilities
 
-Utility applications like Random Windows, Custom Window:
-
 ```javascript
 APP_REGISTRY.utilities = {
     utilityId: {
@@ -52,23 +62,23 @@ APP_REGISTRY.utilities = {
 }
 ```
 
-### 3. Apps
+### 3. Cascade State
 
-Direct application launchers (for ?app parameter):
+Each profile maintains independent cascade tracking:
 
 ```javascript
-APP_REGISTRY.apps = {
-    appId: {
-        id: 'appId',
-        name: 'Display Name',
-        handler: handlerFunction
+APP_REGISTRY.cascadeState = {
+    profileId: {
+        x: 0,        // Current cascade X position
+        y: 0,        // Current cascade Y position
+        stackLength: 0  // Number of windows in current stack
     }
 }
 ```
 
 ## Startup Configuration
 
-### Default Configuration
+### Default Configuration (in script.js)
 
 ```javascript
 DEFAULT_STARTUP_CONFIG = {
@@ -77,7 +87,7 @@ DEFAULT_STARTUP_CONFIG = {
         count: 10,                              // Number of windows per profile
         delay: 100,                             // Delay between windows (ms)
         cascade: true,                          // Use cascade layout
-        sequence: ['zigzag1001', 'weekoldroadkill']  // Profile order
+        sequence: []                            // Profile order (auto-populated)
     },
     utilities: {
         enabled: true,
@@ -98,8 +108,9 @@ DEFAULT_STARTUP_CONFIG = {
 
 - `?z=N` - Spawn N zigzag1001 profile windows (no cascade)
 - `?w=N` - Spawn N weekoldroadkill profile windows (no cascade)
+- `?z=N&w=M` - **NEW: Can work together!** Spawn N zigzag + M weekoldroadkill
 - `?no` - Disable profile windows
-- `?app=appId` - Launch a specific app (e.g., `?app=pixelwind`)
+- `?app=appId` - Launch a specific app (searches project lists dynamically)
 
 ### New Standardized Parameters
 
@@ -116,13 +127,13 @@ DEFAULT_STARTUP_CONFIG = {
 ```
 http://localhost/index.html
 ```
-Spawns 10 windows of zigzag1001 and weekoldroadkill in cascade mode, with random windows utility.
+Spawns 10 windows of each profile (zigzag1001 and weekoldroadkill) with cascade.
 
-**Custom profile count:**
+**Both z and w together (NEW!):**
 ```
-http://localhost/index.html?profileCount=5
+http://localhost/index.html?z=2&w=3
 ```
-Spawns 5 windows of each profile.
+Spawns 2 zigzag1001 windows and 3 weekoldroadkill windows.
 
 **Single profile:**
 ```
@@ -130,11 +141,11 @@ http://localhost/index.html?profiles=zigzag1001&profileCount=3
 ```
 Spawns 3 zigzag1001 windows only.
 
-**Multiple profiles with custom count:**
+**Launch project directly:**
 ```
-http://localhost/index.html?profiles=weekoldroadkill,zigzag1001&profileCount=2
+http://localhost/index.html?app=pixelwind&no
 ```
-Spawns 2 windows of each profile in sequence.
+Launches "Pixel Wind" project maximized, no profile windows.
 
 **No profiles, only utilities:**
 ```
@@ -142,21 +153,9 @@ http://localhost/index.html?no
 ```
 Shows only utility apps and static windows.
 
-**Launch specific app:**
-```
-http://localhost/index.html?app=pixelwind
-```
-Launches pixelwind app maximized.
-
-**Complete customization:**
-```
-http://localhost/index.html?profiles=zigzag1001&profileCount=5&profileDelay=200&noUtilities
-```
-Spawns 5 zigzag1001 windows with 200ms delay, no utilities.
-
 ## Adding New Content
 
-### Adding a New Profile
+### Adding a New Profile (in hardcoded.js)
 
 1. Add profile data to `APP_REGISTRY.profiles`:
 
@@ -187,24 +186,36 @@ APP_REGISTRY.profiles.newprofile = {
 2. Create the handler function:
 
 ```javascript
-function newProfileFunction(halfpage = true, side = 'left') {
+function newProfileFunction(halfpage = true, side = 'left', profileId = 'newprofile') {
     const profile = APP_REGISTRY.profiles.newprofile;
     createProfileFromJson({
         ...profile.profileData,
         rows: profile.projects
-    }, halfpage, side);
+    }, halfpage, side, profileId);
 }
 ```
 
-3. Add to default startup sequence if desired:
+### Adding a New Project to Existing Profile
+
+Simply add to the projects array in hardcoded.js:
 
 ```javascript
-DEFAULT_STARTUP_CONFIG.profiles.sequence = ['zigzag1001', 'weekoldroadkill', 'newprofile'];
+APP_REGISTRY.profiles.zigzag1001.projects.push({
+    buttonText: 'New Project',
+    sourceUrl: 'https://github.com/zigzag1001/newproject',
+    siteUrl: 'https://weekoldroadkill.com/newproject/',
+    icon: 'defragment-0.png'
+});
 ```
+
+The project is automatically:
+- ✅ Available via desktop icon
+- ✅ Shown in profile window
+- ✅ Launchable via `?app=newproject`
 
 ### Adding a New Utility
 
-1. Add to `APP_REGISTRY.utilities`:
+1. Add to `APP_REGISTRY.utilities` in hardcoded.js:
 
 ```javascript
 APP_REGISTRY.utilities.newtool = {
@@ -215,36 +226,39 @@ APP_REGISTRY.utilities.newtool = {
 };
 ```
 
-2. Add to default utilities if desired:
+2. Optionally add to default utilities in script.js:
 
 ```javascript
 DEFAULT_STARTUP_CONFIG.utilities.apps = ['randomWindows', 'newtool'];
 ```
 
-### Adding a New App
+## Key Improvements
 
-1. Add to `APP_REGISTRY.apps`:
+### 1. Better Separation of Concerns
+- **script.js**: Framework and core functionality
+- **hardcoded.js**: Profile data and project lists
 
-```javascript
-APP_REGISTRY.apps.newapp = {
-    id: 'newapp',
-    name: 'New App',
-    handler: () => {
-        addWindow(simpleIframe('https://app-url.com', {
-            title: 'New App',
-            max: true
-        }));
-    }
-};
-```
+### 2. Per-Profile Cascade Tracking
+- Each profile maintains independent cascade position
+- No interference between different profiles
+- Cleaner window arrangement
 
-2. Use with `?app=newapp` parameter
+### 3. Independent URL Parameters
+- `?z` and `?w` can now work together
+- More flexible startup configurations
+- Backward compatible with old URLs
+
+### 4. Dynamic App Discovery
+- No need to register apps separately
+- Projects automatically available via `?app` parameter
+- Reduces duplication
 
 ## Benefits
 
-1. **Centralized Management**: All apps and profiles in one place
+1. **Centralized Management**: All apps and profiles in one registry
 2. **Data-Driven**: Easy to add/modify content without changing core logic
 3. **Flexible Startup**: Configure startup behavior via URL parameters
 4. **Backward Compatible**: Legacy parameters still work
 5. **Extensible**: Easy to add new profiles, utilities, and apps
-6. **Maintainable**: Separation of data and logic
+6. **Maintainable**: Clear separation of framework vs data
+7. **Independent Cascading**: Each profile tracks its own position
