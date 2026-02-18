@@ -654,10 +654,6 @@ APP_REGISTRY.profiles.zigzag1001.icon = icons[0];
 addIcon(createIcon(APP_REGISTRY.profiles.weekoldroadkill.icon, APP_REGISTRY.profiles.weekoldroadkill.name, weekoldroadkill));
 addIcon(createIcon(APP_REGISTRY.profiles.zigzag1001.icon, APP_REGISTRY.profiles.zigzag1001.name, zigzag1001));
 
-// Add static windows that are always shown (not controlled by startup config)
-addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'))
-addWindow(simpleImage('https://camo.githubusercontent.com/65b4f007ed9bd5acc0b0cf783286fed2c564f8799d84e54e54c4d0267eabb004/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
-
 /**
  * Main startup function - now data-driven!
  */
