@@ -187,8 +187,14 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 
     } else {
 
-        x = Math.min(x, mx);
-        y = Math.min(y, my);
+        // x = Math.min(x, mx);
+        // y = Math.min(y, my);
+        if (x > mx) {
+            console.log('Adjusting x from', x, 'to', mx);
+        }
+        if (y > my) {
+            console.log('Adjusting y from', y, 'to', my);
+        }
 
     }
 
@@ -203,6 +209,7 @@ function addWindow(win, x = 0, y = 0, mx = 0, my = 0, randomize = true, cascade 
 
 
 	win.style.zIndex = maxz++;
+    console.log('Adding window at', x, y);
 	win.style.left = x + 'px';
 	win.style.top = y + 'px';
 

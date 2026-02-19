@@ -156,7 +156,7 @@ const windowSize = {
  * @param {boolean} [halfpage=true] - Whether to use halfpage layout.
  * @param {string} [side='left'] - Side for halfpage layout ('left' or 'right').
  */
-function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
+function createProfileFromJson(profileJson, halfpage = true, side = 'left', x = null, y = null) {
 
     // count number of windows with dataset tag profileJson.title
     var count = 0;
@@ -252,7 +252,10 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
         tag: profileJson.title || ''
     });
 
-    if (halfpage) {
+    if (x!= null && y != null) {
+        addWindow(custom, x, y, 0, 0, false, false);
+    }
+    else if (halfpage) {
         var mx = window.innerWidth / 2;
         var x = (side === "right") ? mx : 0;
         addWindow(custom, x, 0, mx, 0, false, true);
@@ -261,7 +264,7 @@ function createProfileFromJson(profileJson, halfpage = true, side = 'left') {
     }
 }
 
-function weekoldroadkill(halfpage = true, side = 'left') {
+function weekoldroadkill(halfpage = true, side = 'left', x = null, y = null) {
     createProfileFromJson({
         title: '🦌\xa0\xa0\xa0\xa0weekOldRoadkill',
         img: 'https://gitlab.com/uploads/-/system/user/avatar/10934353/avatar.png?width=800',
@@ -332,11 +335,11 @@ function weekoldroadkill(halfpage = true, side = 'left') {
         ],
         sourceLink: 'https://gitlab.com/weekOldRoadkill',
         sourceText: 'GitLab'
-    }, halfpage, side);
+    }, halfpage, side, x, y);
 }
 
 
-function zigzag1001(halfpage = true, side = 'right') {
+function zigzag1001(halfpage = true, side = 'right', x = null, y = null) {
     createProfileFromJson({
         title: '👑\xa0\xa0\xa0\xa0zigzag1001',
         img: './img/pfp.gif',
@@ -360,7 +363,7 @@ function zigzag1001(halfpage = true, side = 'right') {
         ],
         sourceLink: 'https://github.com/zigzag1001',
         sourceText: 'GitHub'
-    }, halfpage, side);
+    }, halfpage, side, x, y);
 }
 
 
@@ -402,65 +405,87 @@ addIcon(createIcon(zigzag1001icon, 'zigzag1001', zigzag1001));
 // 	addIcon(apps[i]);
 // }
 
-addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'))
-addWindow(simpleImage('https://camo.githubusercontent.com/65b4f007ed9bd5acc0b0cf783286fed2c564f8799d84e54e54c4d0267eabb004/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
+
 
 
 window.onload = function() {
 	const query = new URLSearchParams(window.location.search);
 
-	numprofiles = 10;
-	singlenumprofiles = 3;
-	i = 0;
+    let zCount = 10;
+    let wCount = 10;
+
+    let extra_params = {}
+
+    let zigzagX = null;
+    let weekoldX = null;
+    let commonY = null;
+
+	// 's' parameter forces simple layout
+    // center on each half of the screen, 1 profile each, no random windows
+	if (query.has('s')) {
+		zCount = 1;
+		wCount = 1;
+
+        extra_params.noRandom = true;
+
+        // calculate center positions for each profile
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+
+        let winHalfWidth = screenWidth / 2;
+
+        weekoldX = winHalfWidth / 2 - 250/2 - 32;
+        zigzagX = winHalfWidth + winHalfWidth / 2 - 250/2 - 32;
+
+        commonY = screenHeight / 2 - 300;
+
+	} else {
+        addWindow(simpleImage('https://camo.githubusercontent.com/65b4f007ed9bd5acc0b0cf783286fed2c564f8799d84e54e54c4d0267eabb004/68747470733a2f2f692e6962622e636f2f4e7979313370302f706f67676572732e706e67', opts = { width: 400, height: 130 }))
+    }
+
+	// 'z' parameter sets zigzag1001 count
 	if (query.has('z')) {
-		var tmp = query.get('z');
-		if (tmp > 0) {
-			singlenumprofiles = tmp;
-		}
-		const interval = setInterval(function() {
-			zigzag1001(false);
-			i++;
-			if (i >= singlenumprofiles) {
-				clearInterval(interval);
-			}
-		}, 86);
-	} else if (query.has('w')) {
-		var tmp = query.get('w');
-		if (tmp > 0) {
-			singlenumprofiles = tmp;
-		}
-		const interval = setInterval(function() {
-			weekoldroadkill(false);
-			i++;
-			if (i >= singlenumprofiles) {
-				clearInterval(interval);
-			}
-		}, 86);
-	} else if (!query.has('z') && !query.has('w') && !query.has('no')) {
-		const interval = setInterval(function() {
-
-			zigzag1001();
-
-			i++;
-			if (i >= numprofiles) {
-				clearInterval(interval);
-                resetCascade();
-                i = 0;
-                const interval2 = setInterval(function() {
-
-                    weekoldroadkill();
-
-                    i++;
-                    if (i >= numprofiles) {
-                        clearInterval(interval2);
-                    }
-                }, 100);
-			}
-		}, 100);
+		let val = parseInt(query.get('z'));
+		if (!isNaN(val)) zCount = val;
 	}
 
+	// 'w' parameter sets weekoldroadkill count
+	if (query.has('w')) {
+		let val = parseInt(query.get('w'));
+		if (!isNaN(val)) wCount = val;
+	}
+
+	let i = 0;
+	const interval = setInterval(function() {
+		if (i < zCount) {
+			zigzag1001(true, 'right', zigzagX, commonY);
+		}
+		
+		if (i >= zCount && i == zCount) {
+             resetCascade();
+        }
+
+		if (i >= zCount && i < zCount + wCount) {
+			weekoldroadkill(true, 'left', weekoldX, commonY);
+		}
+
+		i++;
+		if (i >= zCount + wCount) {
+			clearInterval(interval);
+		}
+	}, 100);
+
+
+    //centered
+    let centerX = window.innerWidth / 2 - 262/2 - 32;
+    let centerY = window.innerHeight / 2 - 246/2 - 32;
+
     setTimeout(function() {
-        randomWinodws();
+        if (!extra_params.noRandom) {
+                randomWinodws();
+        }
+
+        addWindow(simpleImage('https://i1.sndcdn.com/avatars-YRVj4sLMyUloU5Fp-XKkMPA-t1080x1080.jpg'), centerX, centerY, 0, 0, false, false);
     }, 2000);
 
 	if (query.has('app')) {
@@ -473,3 +498,71 @@ window.onload = function() {
 		}
 	}
 }
+
+    // params:
+    // z = number of zigzag1001 profiles to open
+    // w = number of weekoldroadkill profiles to open
+    // s = simple hardcoded layout
+
+	// i = 0;
+	// if (query.has('z')) {
+	// 	var tmp = query.get('z');
+	// 	if (tmp > 0) {
+	// 		singlenumprofiles = tmp;
+	// 	}
+	// 	const interval = setInterval(function() {
+	// 		zigzag1001(false);
+	// 		i++;
+	// 		if (i >= singlenumprofiles) {
+	// 			clearInterval(interval);
+	// 		}
+	// 	}, 86);
+	// } else if (query.has('w')) {
+	// 	var tmp = query.get('w');
+	// 	if (tmp > 0) {
+	// 		singlenumprofiles = tmp;
+	// 	}
+	// 	const interval = setInterval(function() {
+	// 		weekoldroadkill(false);
+	// 		i++;
+	// 		if (i >= singlenumprofiles) {
+	// 			clearInterval(interval);
+	// 		}
+	// 	}, 86);
+	// } else if (!query.has('z') && !query.has('w') && !query.has('no')) {
+	// 	const interval = setInterval(function() {
+	//
+	// 		zigzag1001();
+	//
+	// 		i++;
+	// 		if (i >= numprofiles) {
+	// 			clearInterval(interval);
+	//                resetCascade();
+	//                i = 0;
+	//                const interval2 = setInterval(function() {
+	//
+	//                    weekoldroadkill();
+	//
+	//                    i++;
+	//                    if (i >= numprofiles) {
+	//                        clearInterval(interval2);
+	//                    }
+	//                }, 100);
+	// 		}
+	// 	}, 100);
+	// }
+	//
+	//    setTimeout(function() {
+	//        randomWinodws();
+	//    }, 2000);
+	//
+	// if (query.has('app')) {
+	// 	var app = query.get('app');
+	// 	if (app == 'pixelwind') {
+	// 		pixelWindIframe(max = true);
+	// 	}
+	// 	if (app == 'pixelsort') {
+	// 		pixelSortIframe(max = true);
+	// 	}
+	// }
+// }
